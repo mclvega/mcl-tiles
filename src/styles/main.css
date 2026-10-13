@@ -888,3 +888,10 @@ h1:focus {
   0% { transform: scale(1.12); }
   100% { transform: scale(1); }
 }
+
+/* Nivel completado: corto y centrado. */
+.modal-victoria { max-width: 520px; text-align: center; }
+.modal-victoria .modal-titulo { padding: 0; }
+.victoria { gap: 0.6rem; }
+.victoria .estrellas { margin: 0; }
+.victoria .texto-grande, .victoria .premio { margin: 0; }

@@ -10,15 +10,15 @@ import { mulberry32 } from '../core/rng';
 import { AYUDAS, ORDEN_AYUDAS, type IdAyuda } from '../economy/shop';
 import {
   PREMIOS,
-  ayudaAlAzar,
   gastarTalentos,
   ganaTalentosRestantes,
   premioNivel,
   registrarGanaTalentos,
   sumarTalentos,
+  tocaQuiz,
 } from '../economy/wallet';
 import { efectos } from '../fx/loop';
-import { chipTalentos, mostrarAnimo, tarjetaVersiculo } from './componentes';
+import { chipTalentos, mostrarAnimo } from './componentes';
 import { panelConfiguracion } from './configuracion';
 import { abrirModal, avisar, boton, confirmar, esperar, h, hayModalAbierto, type Modal } from './dom';
 import { abrirPregunta } from './pregunta';
@@ -68,11 +68,13 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const estadoBandeja = h('p', { class: 'estado-bandeja', 'aria-live': 'polite' });
   const ayudasEl = h('div', { class: 'ayudas', role: 'group', 'aria-label': 'Ayudas' });
 
-  const subtitulo =
-    `${ub.nombreLibro} · ${ub.nivelEnLibro} de ${NIVELES_POR_LIBRO}` +
-    (p.tipoNivel === 'especial' ? ' · ⭐ Nivel especial: premio doble' : '') +
-    (p.tipoNivel === 'descanso' ? ' · 🌿 Nivel de descanso' : '') +
-    (masFacil ? ' · 🙂 Versión más fácil' : '');
+  const subtitulo = [
+    p.tipoNivel === 'especial' ? '⭐ Premio doble' : '',
+    p.tipoNivel === 'descanso' ? '🌿 Descanso' : '',
+    masFacil ? '🙂 Más fácil' : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   const el = h(
     'main',
@@ -81,7 +83,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       'header',
       { class: 'barra-juego' },
       boton('Pausa', () => abrirPausa(), { icono: '⏸', variante: 'secundario', etiqueta: 'Pausa' }),
-      h('div', { class: 'titulo-nivel' }, h('h1', { text: `Nivel ${n}` }), h('span', { text: subtitulo })),
+      h('div', { class: 'titulo-nivel' }, h('h1', { text: `Nivel ${n}` }), subtitulo ? h('span', { text: subtitulo }) : null),
       talentos.el,
     ),
     zonaTablero,
@@ -559,24 +561,6 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
 
   /* ---------- Fin del nivel ---------- */
 
-  async function abrirCofre(): Promise<void> {
-    app.g.nivelesDesdeCofre = 0;
-    app.guardar();
-    const regalo = ayudaAlAzar(Math.random());
-    const acerto = await abrirPregunta({
-      titulo: '🎁 Cofre de bendiciones',
-      premio: 'Responde esta pregunta para abrir el cofre.',
-      resultado: (ok) =>
-        ok
-          ? `+${PREMIOS.cofre.acierto} monedas y una ayuda «${AYUDAS[regalo].nombre}» de regalo 🎁`
-          : `+${PREMIOS.cofre.error} monedas 🪙`,
-      textoContinuar: 'Seguir',
-    });
-    sumarTalentos(app.g, acerto ? PREMIOS.cofre.acierto : PREMIOS.cofre.error);
-    if (acerto) app.g.ayudas[regalo]++;
-    app.guardar();
-  }
-
   async function victoria(): Promise<void> {
     terminado = true;
     window.clearTimeout(temporizadorPista);
@@ -585,11 +569,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     const premio = premioNivel(p, estrellas);
     const nuevo = n === g.nivelActual;
     g.estrellas[n] = Math.max(g.estrellas[n] ?? 0, estrellas);
-    if (nuevo) {
-      g.nivelActual = n + 1;
-      g.nivelesDesdeCofre++;
-    }
+    if (nuevo) g.nivelActual = n + 1;
     sumarTalentos(g, premio);
+    // El versículo del nivel se guarda en «Mis versículos» (no se muestra aquí para que la pantalla sea corta).
     if (!g.versiculos.some((v) => v.nivel === n)) g.versiculos.unshift({ id: versiculo.id, nivel: n, fecha: claveDia() });
     delete g.fallos[n];
     app.guardar();
@@ -600,44 +582,71 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     efectos.celebracion();
     if (!reducidas()) await esperar(700);
 
-    const cofrePendiente = nuevo && g.nivelesDesdeCofre >= PREMIOS.nivelesPorCofre;
     let finLibro: string | null = null;
     if (nuevo && ub.nivelEnLibro === NIVELES_POR_LIBRO) {
       finLibro =
         ub.libro === LIBROS.length - 1
-          ? `🎉 ¡Completaste el recorrido por toda la Biblia! Empieza la vuelta ${ub.vuelta + 1} con fichas nuevas.`
-          : `🎉 ¡Terminaste el libro de ${ub.nombreLibro}! Ahora sigue ${LIBROS[ub.libro + 1]}.`;
+          ? `🎉 ¡Recorriste toda la Biblia! Empieza la vuelta ${ub.vuelta + 1} con fichas nuevas.`
+          : `🎉 ¡Terminaste ${ub.nombreLibro}! Sigue ${LIBROS[ub.libro + 1]}.`;
     }
+
+    const quiz = nuevo && tocaQuiz(n);
+    const textoPremio = h('p', { class: 'premio', text: `+${premio} monedas 🪙${p.tipoNivel === 'especial' ? ' (premio doble)' : ''}` });
+    let ganado = premio;
+    const bonus = boton(`Pregunta bonus: gana ${PREMIOS.bonus.acierto} monedas más`, async () => {
+      bonus.disabled = true;
+      const acerto = await abrirPregunta({
+        titulo: '⭐ Pregunta bonus',
+        premio: `Responde y gana ${PREMIOS.bonus.acierto} monedas extra.`,
+        resultado: (ok) => `+${ok ? PREMIOS.bonus.acierto : PREMIOS.bonus.error} monedas 🪙`,
+        textoContinuar: 'Volver',
+      });
+      const extra = acerto ? PREMIOS.bonus.acierto : PREMIOS.bonus.error;
+      sumarTalentos(app.g, extra);
+      app.guardar();
+      talentos.refrescar();
+      ganado += extra;
+      textoPremio.textContent = `+${ganado} monedas 🪙`;
+      bonus.querySelector('.btn-texto')!.textContent = acerto ? '¡Bonus ganado! ✔' : 'Bonus respondido ✔';
+      siguiente.focus();
+    }, { icono: '❓', variante: 'suave', clase: 'btn-ancho' });
 
     const salir = async (destino: 'siguiente' | 'inicio') => {
       modal.cerrar();
-      if (cofrePendiente) await abrirCofre();
+      if (quiz) {
+        const acerto = await abrirPregunta({
+          titulo: '🧠 Quiz bíblico',
+          premio: `¡Hora del quiz, ${app.nombre()}! Responde y gana hasta ${PREMIOS.quiz.acierto} monedas.`,
+          resultado: (ok) => `+${ok ? PREMIOS.quiz.acierto : PREMIOS.quiz.error} monedas 🪙`,
+          textoContinuar: destino === 'siguiente' ? 'Seguir al próximo nivel' : 'Volver al inicio',
+        });
+        sumarTalentos(app.g, acerto ? PREMIOS.quiz.acierto : PREMIOS.quiz.error);
+        app.guardar();
+      }
       if (destino === 'siguiente') app.ir('juego', { nivel: n + 1 });
       else app.ir('inicio');
     };
-
     const siguiente = boton('Siguiente nivel', () => void salir('siguiente'), { icono: '▶', variante: 'primario' });
     siguiente.dataset.focoInicial = '';
     const contenido = h(
       'div',
-      { class: 'pila' },
+      { class: 'pila victoria' },
       h(
         'p',
         { class: 'estrellas', 'aria-label': `${estrellas} de 3 estrellas` },
         ...[1, 2, 3].map((i) => h('span', { class: i <= estrellas ? '' : 'apagada', 'aria-hidden': 'true', text: '⭐' })),
       ),
       h('p', { class: 'texto-grande centrado', text: `¡Bien hecho, ${app.nombre()}!` }),
-      h('p', { class: 'premio', text: `+${premio} monedas 🪙${p.tipoNivel === 'especial' ? ' (premio doble)' : ''}` }),
-      finLibro ? h('p', { class: 'respuesta bien', text: finLibro }) : null,
-      cofrePendiente ? h('p', { class: 'centrado', text: '🎁 ¡Ganaste un cofre de bendiciones! Se abre al continuar.' }) : null,
-      h('p', { class: 'texto-suave centrado', text: 'Tu versículo para hoy:' }),
-      tarjetaVersiculo(versiculo, { favorito: true }),
+      textoPremio,
+      finLibro ? h('p', { class: 'respuesta bien centrado', text: finLibro }) : null,
+      quiz ? h('p', { class: 'centrado', text: '🧠 Al continuar te espera un quiz bíblico.' }) : bonus,
       h('div', { class: 'fila-botones' }, siguiente, boton('Inicio', () => void salir('inicio'), { icono: '🏠' })),
     );
     const modal = abrirModal({
       titulo: `¡Nivel ${n} completado!`,
       contenido,
       cerrable: false,
+      clase: 'modal-victoria',
       alCerrar: () => audio.atenuar(false),
     });
   }

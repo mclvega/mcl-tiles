@@ -4,12 +4,18 @@ import { AYUDAS, ARTICULOS_POR_ID, type IdAyuda } from './shop';
 
 /** Premios en talentos (Mateo 25: la parábola de los talentos). */
 export const PREMIOS = {
-  cofre: { acierto: 30, error: 15 },
+  /** Pregunta bonus opcional al completar un nivel. */
+  bonus: { acierto: 10, error: 3 },
+  /** Quiz bíblico automático cada 2 o 3 niveles. */
+  quiz: { acierto: 20, error: 5 },
   preguntaDia: { acierto: 50, error: 25 },
   ganaTalentos: { acierto: 10, error: 5, maximoDiario: 5 },
-  /** Cada cuántos niveles nuevos aparece el cofre de bendiciones. */
-  nivelesPorCofre: 3,
 };
+
+/** El quiz aparece alternando cada 2 y 3 niveles (tras los niveles 2, 5, 7, 10, 12…). */
+export function tocaQuiz(nivel: number): boolean {
+  return nivel % 5 === 2 || nivel % 5 === 0;
+}
 
 export function premioNivel(p: ParamsNivel, estrellas: number): number {
   return Math.round((10 + 5 * estrellas) * p.premioMult);

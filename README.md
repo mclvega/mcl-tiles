@@ -6,7 +6,7 @@ Juego de fichas para el navegador. Se juntan tres fichas iguales y, al completar
 - **Recorrido por la Biblia:** cada 20 niveles se avanza un libro, de Génesis a Apocalipsis. Al terminar empieza una nueva vuelta con fichas nuevas.
 - **Fichas coloridas:** animalitos (cordero, paloma, león, camello, burrito, ranita, abejita…), instrumentos de alabanza (arpa, shofar, pandero, guitarra, flauta, címbalos, tambor, campana, violín) y símbolos bíblicos. Son SVG propios, sin imágenes de personas.
 - **Biblia local:** 200 versículos RVR1960 incluidos en el juego. Se leen sin conexión y sin depender de otras páginas.
-- **Preguntas bíblicas fáciles** con 3 opciones. Se usan en el cofre de bendiciones (cada 3 niveles), en la pregunta del día y en la segunda oportunidad. Equivocarse nunca castiga.
+- **Preguntas bíblicas fáciles** con 3 opciones. Cada 2 o 3 niveles aparece un **quiz bíblico** automático; en los demás niveles hay una pregunta bonus opcional (monedas extra). También se usan en la pregunta del día y en la segunda oportunidad. El versículo de cada nivel se guarda en «Mis versículos». Equivocarse nunca castiga.
 - **Tienda "El Alfolí":** las monedas ganadas se canjean por ayudas, fondos, estilos de ficha, melodías y tarjetas de versículo. No se usa dinero real.
 - **Pide el nombre del jugador** y lo usa en los saludos. Solo se guarda en el navegador.
 - **Menú de Configuración:**
