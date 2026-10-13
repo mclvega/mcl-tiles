@@ -294,10 +294,8 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         setMensaje(`La bandeja tiene ${partida.capacidad} espacios. Si se llena, puedes intentarlo otra vez. ¡Sin prisa!`, { hablar: true });
       } else if (triosHechos >= 1) ocultarMensaje();
     } else if (n === 3) {
-      if (triosHechos === 0 && partida.bandeja.length === 0) {
-        setMensaje('Algunas fichas están encima de otras. Las de abajo se ven oscuras: primero quita las de arriba.', { hablar: true });
-        mostrarPista(true);
-      } else if (triosHechos >= 1) ocultarMensaje();
+      // Sin mensaje: en celulares con letra grande tapaba demasiado el tablero.
+      if (triosHechos === 0 && partida.bandeja.length === 0) mostrarPista(true);
     }
   }
 
