@@ -149,9 +149,10 @@ export interface ObjetivoBolitas {
 }
 
 /** Parámetros del nivel de bolitas: tablero, colores, objetivos y movimientos (generosos). */
-export function paramsBolitas(n: number, dificultad: string, rng: Rng): { colores: number; objetivos: ObjetivoBolitas[]; movimientos: number } {
+export function paramsBolitas(n: number, dificultad: string, rng: Rng, reto = false): { colores: number; objetivos: ObjetivoBolitas[]; movimientos: number } {
   const colores = dificultad === 'muyFacil' || dificultad === 'facil' ? 4 : 5;
-  const base = Math.min(24, 10 + Math.floor(n / 15));
+  // En el nivel reto hay que juntar algunas bolitas más.
+  const base = Math.min(28, 10 + Math.floor(n / 15) + (reto ? 4 : 0));
   const elegidos: number[] = [];
   while (elegidos.length < 2) {
     const c = Math.floor(rng() * colores);

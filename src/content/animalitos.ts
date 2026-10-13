@@ -144,7 +144,8 @@ export const FICHAS_ANIMALITOS: TipoFicha[] = TEMAS.flatMap((tema) =>
 
 /** Tema del nivel temático n (rota entre todos los animales). */
 export function temaDeNivel(n: number): Tema {
-  return TEMAS[Math.floor(n / 6) % TEMAS.length];
+  // Cada nivel del bloque de animalitos trae un animal distinto.
+  return TEMAS[n % TEMAS.length];
 }
 
 export function poolDeTema(tema: Tema): string[] {

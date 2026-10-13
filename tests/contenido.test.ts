@@ -94,3 +94,18 @@ describe('guardado y economía', () => {
     expect(comprarArticulo(g, 'amanecer')).toBe('yaComprado');
   });
 });
+
+describe('tipos de juego', () => {
+  it('cambian cada 3 niveles y se turnan todos', async () => {
+    const { modalidadDe } = await import('../src/core/difficulty');
+    expect([1, 2, 3].map((n) => modalidadDe(n))).toEqual(['clasico', 'clasico', 'clasico']);
+    for (let bloque = 4; bloque < 400; bloque += 3) {
+      const tipos = new Set([bloque, bloque + 1, bloque + 2].map((n) => modalidadDe(n)));
+      expect(tipos.size).toBe(1);
+      expect(modalidadDe(bloque + 3)).not.toBe(modalidadDe(bloque));
+    }
+    const todos = new Set(Array.from({ length: 60 }, (_, i) => modalidadDe(i + 4)));
+    expect([...todos].sort()).toEqual(['animalitos', 'bolitas', 'clasico', 'dorado', 'sorpresa', 'torre']);
+    expect(Array.from({ length: 200 }, (_, i) => modalidadDe(i + 1, 'muyFacil'))).not.toContain('sorpresa');
+  });
+});

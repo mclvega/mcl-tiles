@@ -41,24 +41,20 @@ export const MODALIDADES: Record<Modalidad, { nombre: string; icono: string }> =
   animalitos: { nombre: 'Animalitos', icono: '🐾' },
 };
 
-/** Rotación de modalidades: el tutorial y los niveles reto son clásicos. */
+/** Orden en que se van turnando los tipos de juego (un bloque de 3 niveles cada uno). */
+const ROTACION: Modalidad[] = ['dorado', 'animalitos', 'bolitas', 'sorpresa', 'torre', 'clasico'];
+export const NIVELES_POR_BLOQUE = 3;
+
+/**
+ * Tipo de juego del nivel n: cambia cada 3 niveles (el tutorial, 1 a 3, es clásico).
+ * El nivel reto (cada 5) conserva el tipo de su bloque, solo que más difícil.
+ */
 export function modalidadDe(n: number, dificultad: Dificultad = 'normal'): Modalidad {
-  const tipo = tipoDeNivel(n);
-  if (tipo === 'tutorial' || tipo === 'reto') return 'clasico';
-  switch (n % 6) {
-    case 1:
-      return n >= 7 ? 'bolitas' : 'clasico';
-    case 2:
-      return 'dorado';
-    case 3:
-      return n >= 9 ? 'animalitos' : 'clasico';
-    case 4:
-      return n >= 12 && dificultad !== 'muyFacil' ? 'sorpresa' : 'dorado';
-    case 5:
-      return 'torre';
-    default:
-      return 'clasico';
-  }
+  if (n <= NIVELES_POR_BLOQUE) return 'clasico';
+  const bloque = Math.floor((n - 1) / NIVELES_POR_BLOQUE) - 1;
+  const modalidad = ROTACION[bloque % ROTACION.length];
+  // Las fichas boca abajo no se usan en «Muy fácil».
+  return modalidad === 'sorpresa' && dificultad === 'muyFacil' ? 'dorado' : modalidad;
 }
 
 export interface ParamsNivel {

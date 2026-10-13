@@ -35,7 +35,7 @@ const ESPERA_PISTA_MS = 10000;
 /** Nivel de «Bolitas de colores»: combinar 3 tocando dos bolitas vecinas. */
 export function pantallaBolitas(n: number, p: ParamsNivel): Pantalla {
   const rng = rngFrom(`bolitas:${n}:${p.dificultad}`);
-  const config = paramsBolitas(n, p.dificultad, rng);
+  const config = paramsBolitas(n, p.dificultad, rng, p.tipoNivel === 'reto');
   const tablero = crearTablero(ANCHO, ALTO, config.colores, rng);
   const objetivos = config.objetivos.map((o) => ({ ...o, juntadas: 0 }));
   const movimientosTotales = config.movimientos;
@@ -87,7 +87,9 @@ export function pantallaBolitas(n: number, p: ParamsNivel): Pantalla {
         color: c.tinta,
       } as unknown as Partial<CSSStyleDeclaration>,
       text: c.simbolo,
-      onclick: () => void tocar(b.id),
+      onclick: () => {
+        if (performance.now() - ultimoGesto > 500) void tocar(b.id);
+      },
     });
     e.style.setProperty('--color', c.fondo);
     e.style.setProperty('--oscuro', c.oscuro);
@@ -331,7 +333,7 @@ export function pantallaBolitas(n: number, p: ParamsNivel): Pantalla {
       contenido: h(
         'div',
         { class: 'pila' },
-        h('p', { class: 'texto-suave', text: 'Toca una bolita y luego una vecina para cambiarlas de lugar. Junta 3 o más del mismo color en línea.' }),
+        h('p', { class: 'texto-suave', text: 'Desliza una bolita hacia su vecina para cambiarlas de lugar (o tócalas una y otra). Junta 3 o más del mismo color en línea.' }),
         continuar,
         boton('Reiniciar el nivel', async () => {
           modal.cerrar();
@@ -351,6 +353,59 @@ export function pantallaBolitas(n: number, p: ParamsNivel): Pantalla {
   };
   document.addEventListener('keydown', alTeclear);
 
+  /* ---------- Deslizar ---------- */
+
+  // Se pone el dedo (o el mouse) en una bolita y se desliza hacia la vecina.
+  let ultimoGesto = 0;
+  let gesto: { id: number; x: number; y: number; usado: boolean } | null = null;
+  tableroEl.addEventListener('pointerdown', (ev) => {
+    const bola = (ev.target as HTMLElement).closest<HTMLElement>('.bolita');
+    if (!bola || ocupado || terminado) return;
+    const id = [...elementos.entries()].find(([, e]) => e === bola)?.[0];
+    if (id === undefined) return;
+    gesto = { id, x: ev.clientX, y: ev.clientY, usado: false };
+    ultimoGesto = performance.now();
+    tableroEl.setPointerCapture?.(ev.pointerId);
+  });
+  tableroEl.addEventListener('pointermove', (ev) => {
+    if (!gesto || gesto.usado) return;
+    const dx = ev.clientX - gesto.x;
+    const dy = ev.clientY - gesto.y;
+    const umbral = Math.max(18, tamCelda * 0.3);
+    if (Math.hypot(dx, dy) < umbral) return;
+    gesto.usado = true;
+    ultimoGesto = performance.now();
+    const desde = indiceDe(gesto.id);
+    if (desde < 0) return;
+    const x = desde % ANCHO;
+    const y = Math.floor(desde / ANCHO);
+    const [nx, ny] = Math.abs(dx) > Math.abs(dy) ? [x + Math.sign(dx), y] : [x, y + Math.sign(dy)];
+    if (nx < 0 || ny < 0 || nx >= ANCHO || ny >= ALTO) return;
+    void deslizar(desde, ny * ANCHO + nx);
+  });
+  const terminarGesto = () => {
+    if (gesto && !gesto.usado) {
+      // Sin deslizar: funciona como un toque (elegir y luego tocar la vecina).
+      ultimoGesto = performance.now();
+      void tocar(gesto.id);
+    }
+    gesto = null;
+  };
+  tableroEl.addEventListener('pointerup', terminarGesto);
+  tableroEl.addEventListener('pointercancel', () => (gesto = null));
+
+  async function deslizar(a: number, b: number): Promise<void> {
+    if (ocupado || terminado) return;
+    reiniciarPista();
+    seleccion = null;
+    ocupado = true;
+    try {
+      await mover(a, b);
+    } finally {
+      ocupado = false;
+    }
+  }
+
   const observador = new ResizeObserver(() => distribuir());
   observador.observe(zona);
   pintarObjetivos();
@@ -360,7 +415,7 @@ export function pantallaBolitas(n: number, p: ParamsNivel): Pantalla {
     // Explicación breve solo la primera vez que se juega un nivel de bolitas.
     const yaJugo = Object.keys(app.g.estrellas).some((k) => Number(k) !== n && modalidadDe(Number(k), p.dificultad) === 'bolitas');
     if (!yaJugo && !app.g.estrellas[n]) {
-      avisar('Toca una bolita y luego una vecina para cambiarlas. ¡Junta 3 iguales!', 5000);
+      avisar('Desliza una bolita hacia su vecina para cambiarlas. ¡Junta 3 iguales!', 5000);
     }
     reiniciarPista();
   });
