@@ -2,7 +2,7 @@
 
 Juego de fichas para el navegador. Se juntan tres fichas iguales y, al completar cada nivel, el juego regala un versículo de la Biblia Reina-Valera 1960. Está pensado para **adultos de 60 años o más**: es fácil, tranquilo y no tiene fin.
 
-- **Niveles infinitos:** se generan solos a partir del número de nivel y siempre tienen solución.
+- **Niveles infinitos:** se generan solos a partir del número de nivel y siempre tienen solución. Cada 5 niveles hay un **nivel reto**, un poco más difícil solo en ese nivel y con premio doble.
 - **Recorrido por la Biblia:** cada 20 niveles se avanza un libro, de Génesis a Apocalipsis. Al terminar empieza una nueva vuelta con fichas nuevas.
 - **Fichas coloridas:** animalitos (cordero, paloma, león, camello, burrito, ranita, abejita…), instrumentos de alabanza (arpa, shofar, pandero, guitarra, flauta, címbalos, tambor, campana, violín) y símbolos bíblicos. Son SVG propios, sin imágenes de personas.
 - **Biblia local:** 200 versículos RVR1960 incluidos en el juego. Se leen sin conexión y sin depender de otras páginas.

@@ -18,7 +18,44 @@ export const MODOS: Record<Dificultad, ModoDificultad> = {
   desafio: { nombre: 'Desafío', bandeja: 7, multiplicador: 1.2, capasMax: 5, ayudasGratis: 0, premio: 1.5 },
 };
 
-export type TipoNivel = 'tutorial' | 'descanso' | 'especial' | 'normal';
+/** `reto`: cada 5 niveles, un nivel algo más difícil (solo ese) con premio doble. */
+export type TipoNivel = 'tutorial' | 'reto' | 'normal';
+
+/**
+ * Variedad de niveles (todos fáciles):
+ * - clasico: el juego de fichas de siempre.
+ * - dorado: algunas fichas son doradas y dan monedas extra al juntarlas.
+ * - sorpresa: las fichas tapadas están boca abajo y se revelan al liberarse.
+ * - torre: más capas, pero menos tipos de ficha.
+ * - bolitas: minijuego de combinar 3 bolitas de colores (estilo «candy»).
+ */
+export type Modalidad = 'clasico' | 'dorado' | 'sorpresa' | 'torre' | 'bolitas';
+
+export const MODALIDADES: Record<Modalidad, { nombre: string; icono: string }> = {
+  clasico: { nombre: 'Clásico', icono: '🧩' },
+  dorado: { nombre: 'Nivel dorado', icono: '✨' },
+  sorpresa: { nombre: 'Nivel sorpresa', icono: '🎁' },
+  torre: { nombre: 'Nivel torre', icono: '🗼' },
+  bolitas: { nombre: 'Bolitas de colores', icono: '🔴' },
+};
+
+/** Rotación de modalidades: el tutorial y los niveles reto son clásicos. */
+export function modalidadDe(n: number, dificultad: Dificultad = 'normal'): Modalidad {
+  const tipo = tipoDeNivel(n);
+  if (tipo === 'tutorial' || tipo === 'reto') return 'clasico';
+  switch (n % 6) {
+    case 1:
+      return n >= 7 ? 'bolitas' : 'clasico';
+    case 2:
+      return 'dorado';
+    case 4:
+      return n >= 12 && dificultad !== 'muyFacil' ? 'sorpresa' : 'dorado';
+    case 5:
+      return 'torre';
+    default:
+      return 'clasico';
+  }
+}
 
 export interface ParamsNivel {
   nivel: number;
@@ -31,6 +68,7 @@ export interface ParamsNivel {
   margen: number;
   bandeja: number;
   tipoNivel: TipoNivel;
+  modalidad: Modalidad;
   premioMult: number;
   ayudasGratis: number;
 }
@@ -45,8 +83,7 @@ export function multiploDe3(v: number): number {
 
 export function tipoDeNivel(n: number): TipoNivel {
   if (n <= 3) return 'tutorial';
-  if (n % 10 === 0) return 'especial';
-  if (n % 5 === 0) return 'descanso';
+  if (n % 5 === 0) return 'reto';
   return 'normal';
 }
 
@@ -79,12 +116,12 @@ export function paramsNivel(n: number, dificultad: Dificultad = 'normal', masFac
     ventana = n < 10 ? 1 : randInt(rng, Math.floor(lerp(1.6, 2, t)), Math.round(lerp(2, 3, t)));
     margen = n < 10 ? 4 : n < 30 ? 3 : 2;
 
-    if (tipoNivel === 'especial') {
+    if (tipoNivel === 'reto') {
+      // Sube la dificultad solo en este nivel; el siguiente vuelve a la normalidad.
       fichas *= 1.25;
-    } else if (tipoNivel === 'descanso') {
-      fichas *= 0.7;
-      tipos -= 1;
-      ventana = 1;
+      tipos += 1;
+      capas += 1;
+      ventana += 1;
     }
     fichas *= modo.multiplicador;
     tipos = Math.round(tipos * modo.multiplicador);
@@ -95,6 +132,13 @@ export function paramsNivel(n: number, dificultad: Dificultad = 'normal', masFac
     tipos -= 2;
     ventana = 1;
     capas -= 1;
+  }
+
+  const modalidad = modalidadDe(n, dificultad);
+  if (modalidad === 'torre') {
+    // Más alto pero más simple: una capa más y un tipo de ficha menos.
+    capas += 1;
+    tipos -= 1;
   }
 
   fichas = multiploDe3(fichas);
@@ -112,7 +156,8 @@ export function paramsNivel(n: number, dificultad: Dificultad = 'normal', masFac
     margen,
     bandeja: modo.bandeja,
     tipoNivel,
-    premioMult: modo.premio * (tipoNivel === 'especial' ? 2 : 1),
+    modalidad,
+    premioMult: modo.premio * (tipoNivel === 'reto' ? 2 : 1),
     ayudasGratis: modo.ayudasGratis,
   };
 }

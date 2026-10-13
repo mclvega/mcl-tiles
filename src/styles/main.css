@@ -1073,3 +1073,118 @@ h1:focus {
   from { transform: scaleX(1); }
   to { transform: scaleX(0); }
 }
+
+/* ---------- Variantes de nivel ---------- */
+
+/* Fichas doradas: dan monedas extra al juntar el trío. */
+.ficha.dorada,
+.ficha-bandeja.dorada {
+  background: linear-gradient(145deg, #fff8d6, #ffe48a);
+  border-color: #d9a400;
+}
+.ficha.dorada::after,
+.ficha-bandeja.dorada::after {
+  content: '🪙';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: calc(var(--canto, 6px) * 3.4);
+  line-height: 1;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+.ficha-bandeja.dorada::after { font-size: 16px; top: -6px; right: -6px; }
+
+/* Fichas sorpresa: boca abajo mientras están tapadas. */
+.ficha.boca-abajo {
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.18) 0 6px, transparent 6px 12px),
+    linear-gradient(145deg, #5b7fbf, #3a5a99);
+  border-color: #233d6e;
+}
+.ficha.boca-abajo svg { visibility: hidden; }
+.ficha.boca-abajo::before {
+  content: '?';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  font-size: calc(var(--canto, 6px) * 6);
+}
+.ficha.revela { animation: girar 0.45s ease; }
+
+/* ---------- Bolitas de colores ---------- */
+
+.juego-bolitas {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas: 'barra' 'objetivos' 'tablero';
+}
+.objetivos-bolitas {
+  grid-area: objetivos;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem 1.2rem;
+}
+.objetivo,
+.movimientos {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.objetivo.hecho { border-color: var(--ok); color: var(--ok); }
+.movimientos.pocos { border-color: #e08a00; background: var(--warn-bg); color: var(--warn); }
+.zona-bolitas { grid-area: tablero; min-height: 0; display: grid; place-items: center; }
+.tablero-bolitas {
+  position: relative;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 2px 10px rgba(60, 40, 10, 0.18);
+  overflow: hidden;
+}
+.bolita {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #ffffff 0 9%, var(--color) 42%, var(--oscuro) 100%);
+  box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.25);
+  font: 700 calc(var(--celda, 48px) * 0.38) / 1 sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transform: scale(0.88);
+  transition: left 0.22s ease, top 0.28s cubic-bezier(0.3, 0.7, 0.4, 1.1), transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.bolita:hover { transform: scale(0.94); }
+.bolita.elegida {
+  transform: scale(1);
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 8px var(--primary), inset 0 -4px 6px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+.bolita.pista { animation: latido 1s ease-in-out infinite; z-index: 2; }
+.bolita.explota { animation: salir 0.26s ease forwards; }
+.bolita.tiembla { animation: temblor 0.35s ease; }
+.bolita.mini {
+  position: static;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+  transform: none;
+  cursor: default;
+}
+@media (max-width: 600px) {
+  .movimientos .mov-texto { display: none; }
+}

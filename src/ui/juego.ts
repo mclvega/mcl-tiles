@@ -1,9 +1,9 @@
 import { app, type Pantalla } from '../app';
 import { audio } from '../audio';
-import { NIVELES_POR_LIBRO, LIBROS, ubicarNivel } from '../content/books';
+import { ubicarNivel } from '../content/books';
 import { FICHAS_POR_ID, poolDeVuelta, svgFicha } from '../content/tiles';
 import { claveDia, protagonistaDe, versiculoDeNivel } from '../content/verses';
-import { paramsNivel } from '../core/difficulty';
+import { MODALIDADES, paramsNivel } from '../core/difficulty';
 import { Partida, type EstadoPartida } from '../core/game';
 import { generarTablero } from '../core/generator';
 import { mulberry32 } from '../core/rng';
@@ -12,20 +12,21 @@ import {
   PREMIOS,
   gastarTalentos,
   ganaTalentosRestantes,
-  premioNivel,
   registrarGanaTalentos,
   sumarTalentos,
-  tocaQuiz,
 } from '../economy/wallet';
 import { efectos } from '../fx/loop';
 import { chipTalentos, mostrarAnimo } from './componentes';
 import { panelConfiguracion } from './configuracion';
 import { abrirModal, avisar, boton, confirmar, esperar, h, hayModalAbierto, type Modal } from './dom';
 import { abrirPregunta } from './pregunta';
+import { celebrarNivel } from './finNivel';
+import { pantallaBolitas } from './bolitas';
 
 const ANIMOS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Gloria a Dios!', '¡Sigue así, {n}!', '¡Qué bendición!'];
 const ESPERA_PISTA_MS = 15000;
 const DESPLAZAMIENTO_CAPA = 0.16;
+const PREMIO_DORADO = 3;
 
 export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const g = app.g;
@@ -33,6 +34,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const ub = ubicarNivel(n);
   const masFacil = g.masFacil.includes(n);
   const p = paramsNivel(n, g.config.dificultad, masFacil);
+  if (p.modalidad === 'bolitas') return pantallaBolitas(n, p);
   const pool = poolDeVuelta(ub.vuelta);
   const versiculo = versiculoDeNivel(n);
   const tablero = generarTablero(p, { pool, protagonista: protagonistaDe(versiculo, pool) });
@@ -40,6 +42,11 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
 
   let ayudasGratis = p.ayudasGratis;
   let ocupado = false;
+  /** Monedas extra ganadas en el nivel (fichas doradas). */
+  let monedasExtra = 0;
+  const dorados = new Set(tablero.dorados);
+  const sorpresa = p.modalidad === 'sorpresa';
+  const bocaAbajo = new Set<number>();
   /**
    * Cola de acciones: los toques rápidos no se pierden, se procesan en orden.
    * `finally` garantiza que la cola nunca quede trabada si algo falla.
@@ -69,8 +76,8 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const ayudasEl = h('div', { class: 'ayudas', role: 'group', 'aria-label': 'Ayudas' });
 
   const subtitulo = [
-    p.tipoNivel === 'especial' ? '⭐ Premio doble' : '',
-    p.tipoNivel === 'descanso' ? '🌿 Descanso' : '',
+    p.tipoNivel === 'reto' ? '⭐ Nivel reto · premio doble' : '',
+    p.modalidad !== 'clasico' ? `${MODALIDADES[p.modalidad].icono} ${MODALIDADES[p.modalidad].nombre}` : '',
     masFacil ? '🙂 Más fácil' : '',
   ]
     .filter(Boolean)
@@ -149,9 +156,20 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       const libre = partida.esLibre(f.id);
       b.classList.toggle('libre', libre);
       b.classList.toggle('bloqueada', !libre);
+      b.classList.toggle('dorada', dorados.has(partida.tipo(f.id)));
+      if (sorpresa) {
+        // Sorpresa: las tapadas se ven boca abajo y se dan vuelta al quedar libres.
+        if (!libre) bocaAbajo.add(f.id);
+        else if (bocaAbajo.delete(f.id)) {
+          b.classList.remove('revela');
+          void b.offsetWidth;
+          b.classList.add('revela');
+        }
+        b.classList.toggle('boca-abajo', !libre);
+      }
       b.tabIndex = libre ? 0 : -1;
       b.setAttribute('aria-disabled', String(!libre));
-      b.setAttribute('aria-label', libre ? nombreFicha(f.id) : `${nombreFicha(f.id)} (tapada)`);
+      b.setAttribute('aria-label', libre ? nombreFicha(f.id) : sorpresa ? 'Ficha sorpresa (tapada)' : `${nombreFicha(f.id)} (tapada)`);
     }
   }
 
@@ -165,7 +183,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       const ranura = h('div', { class: `ranura${ranuraNueva && i === partida.capacidad - 1 ? ' nueva' : ''}`, role: 'listitem' });
       const id = lista[i];
       if (id !== undefined) {
-        const fb = h('div', { class: 'ficha-bandeja', dataset: { id: String(id) }, html: svgFicha(partida.tipo(id)), 'aria-label': nombreFicha(id) });
+        const fb = h('div', { class: `ficha-bandeja${dorados.has(partida.tipo(id)) ? ' dorada' : ''}`, dataset: { id: String(id) }, html: svgFicha(partida.tipo(id)), 'aria-label': nombreFicha(id) });
         if (id === ocultar) fb.style.visibility = 'hidden';
         ranura.append(fb);
       }
@@ -217,6 +235,15 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       () => clon.remove(),
       () => clon.remove(),
     );
+  }
+
+  function premioDorado(): void {
+    monedasExtra += PREMIO_DORADO;
+    sumarTalentos(app.g, PREMIO_DORADO);
+    app.guardar();
+    talentos.refrescar();
+    audio.efecto('canje');
+    mostrarAnimo(`✨ +${PREMIO_DORADO} monedas`);
   }
 
   async function animarSalida(ids: number[]): Promise<void> {
@@ -344,6 +371,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     if (r.trio) {
       await animarSalida(r.trio);
       triosHechos++;
+      if (dorados.has(partida.tipo(id))) premioDorado();
       if (triosHechos === 1 || triosHechos % 2 === 0) mostrarAnimo(ANIMOS[triosHechos % ANIMOS.length].replace('{n}', app.nombre()));
       pintarBandeja(partida.bandeja);
     }
@@ -565,87 +593,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   async function victoria(): Promise<void> {
     terminado = true;
     window.clearTimeout(temporizadorPista);
-    const g = app.g;
-    const estrellas = partida.estrellas();
-    const premio = premioNivel(p, estrellas);
-    const nuevo = n === g.nivelActual;
-    g.estrellas[n] = Math.max(g.estrellas[n] ?? 0, estrellas);
-    if (nuevo) g.nivelActual = n + 1;
-    sumarTalentos(g, premio);
-    // El versículo del nivel se guarda en «Mis versículos» (no se muestra aquí para que la pantalla sea corta).
-    if (!g.versiculos.some((v) => v.nivel === n)) g.versiculos.unshift({ id: versiculo.id, nivel: n, fecha: claveDia() });
-    delete g.fallos[n];
-    app.guardar();
-    talentos.refrescar();
-
-    audio.efecto('victoria');
-    audio.atenuar(true);
-    efectos.celebracion();
-    if (!reducidas()) await esperar(700);
-
-    let finLibro: string | null = null;
-    if (nuevo && ub.nivelEnLibro === NIVELES_POR_LIBRO) {
-      finLibro =
-        ub.libro === LIBROS.length - 1
-          ? `🎉 ¡Recorriste toda la Biblia! Empieza la vuelta ${ub.vuelta + 1} con fichas nuevas.`
-          : `🎉 ¡Terminaste ${ub.nombreLibro}! Sigue ${LIBROS[ub.libro + 1]}.`;
-    }
-
-    const quiz = nuevo && tocaQuiz(n);
-    const cifraPremio = h('strong', { text: `+${premio}` });
-    const textoPremio = h(
-      'p',
-      { class: 'premio-monedas', 'aria-live': 'polite' },
-      h('span', { class: 'moneda', 'aria-hidden': 'true', text: '🪙' }),
-      cifraPremio,
-      h('span', { text: ' monedas' }),
-      p.tipoNivel === 'especial' ? h('span', { class: 'doble', text: '×2' }) : null,
-    );
-    let saliendo = false;
-    const salir = async (destino: 'siguiente' | 'inicio') => {
-      if (saliendo) return;
-      saliendo = true;
-      window.clearTimeout(quizAutomatico);
-      modal.cerrar();
-      if (quiz) {
-        // Quiz automático (sin preguntar): pregunta fácil, muestra el resultado y sigue solo.
-        const acerto = await abrirPregunta({
-          titulo: '🧠 Quiz bíblico',
-          premio: `¡Pregunta fácil, ${app.nombre()}! Gana hasta ${PREMIOS.quiz.acierto} monedas.`,
-          resultado: (ok) => `+${ok ? PREMIOS.quiz.acierto : PREMIOS.quiz.error} monedas 🪙`,
-          textoContinuar: destino === 'siguiente' ? 'Seguir al próximo nivel' : 'Volver al inicio',
-          autoCerrarMs: 3500,
-        });
-        sumarTalentos(app.g, acerto ? PREMIOS.quiz.acierto : PREMIOS.quiz.error);
-        app.guardar();
-      }
-      if (destino === 'siguiente') app.ir('juego', { nivel: n + 1 });
-      else app.ir('inicio');
-    };
-    const siguiente = boton('Siguiente nivel', () => void salir('siguiente'), { icono: '▶', variante: 'primario' });
-    siguiente.dataset.focoInicial = '';
-    const contenido = h(
-      'div',
-      { class: 'pila victoria' },
-      h(
-        'p',
-        { class: 'estrellas', 'aria-label': `${estrellas} de 3 estrellas` },
-        ...[1, 2, 3].map((i) => h('span', { class: i <= estrellas ? '' : 'apagada', 'aria-hidden': 'true', text: '⭐' })),
-      ),
-      h('p', { class: 'texto-grande centrado', text: `¡Bien hecho, ${app.nombre()}!` }),
-      textoPremio,
-      finLibro ? h('p', { class: 'respuesta bien centrado', text: finLibro }) : null,
-      h('div', { class: 'fila-botones' }, siguiente, boton('Inicio', () => void salir('inicio'), { icono: '🏠' })),
-    );
-    // En los niveles con quiz, la pregunta aparece sola tras un momento.
-    const quizAutomatico = quiz ? window.setTimeout(() => void salir('siguiente'), 2200) : undefined;
-    const modal = abrirModal({
-      titulo: `¡Nivel ${n} completado!`,
-      contenido,
-      cerrable: false,
-      clase: 'modal-victoria',
-      alCerrar: () => audio.atenuar(false),
-    });
+    await celebrarNivel({ n, estrellas: partida.estrellas(), p, extra: monedasExtra, alGuardar: () => talentos.refrescar() });
   }
 
   function casiLoLogras(registrarFallo: boolean): void {
@@ -779,6 +727,10 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   refrescarAyudas();
   requestAnimationFrame(() => {
     distribuir();
+    if (p.modalidad !== 'clasico' || p.tipoNivel === 'reto') {
+      const texto = p.tipoNivel === 'reto' ? '⭐ Nivel reto' : `${MODALIDADES[p.modalidad].icono} ${MODALIDADES[p.modalidad].nombre}`;
+      setTimeout(() => mostrarAnimo(texto), 250);
+    }
     pasoTutorial();
     reiniciarPista();
     void app.ajustarCalidadAutomatica();

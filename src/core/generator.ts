@@ -25,6 +25,8 @@ export interface Tablero {
   /** Un orden de retirada que resuelve el nivel con la bandeja indicada. */
   solucion: number[];
   protagonista: string | null;
+  /** Tipos dorados (modalidad «dorado»): dan monedas extra al juntarlos. */
+  dorados: string[];
 }
 
 type Pos = [number, number];
@@ -247,6 +249,9 @@ export function generarTablero(p: ParamsNivel, opciones: OpcionesGeneracion): Ta
   const asignacion = asignarTipos(solucion, grupos, p.ventana, limite, rng);
   for (const f of fichas) f.tipo = asignacion.get(f.id)!;
 
+  const candidatosDorados = tipos.filter((t) => t !== protagonista);
+  const dorados = p.modalidad === 'dorado' ? shuffle(rng, candidatosDorados.length ? candidatosDorados : [...tipos]).slice(0, 2) : [];
+
   return {
     fichas,
     cubiertaPor,
@@ -257,5 +262,6 @@ export function generarTablero(p: ParamsNivel, opciones: OpcionesGeneracion): Ta
     layoutId: layout.id,
     solucion,
     protagonista,
+    dorados,
   };
 }
