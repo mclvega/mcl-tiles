@@ -1,13 +1,11 @@
 import { app, type Pantalla } from '../app';
 import { audio } from '../audio';
-import { VERSICULOS_POR_ID, textoVisible } from '../content/verses';
 import { limpiarNombre } from '../storage';
 import { boton, h } from './dom';
-import { logo, miniFicha } from './componentes';
+import { miniFicha } from './componentes';
 
 /** Primer inicio: pide el nombre del jugador (o permite jugar como invitado). */
 export function pantallaBienvenida(): Pantalla {
-  const bendicion = VERSICULOS_POR_ID.get(168)!;
   const entrada = h('input', {
     id: 'nombre',
     type: 'text',
@@ -18,7 +16,25 @@ export function pantallaBienvenida(): Pantalla {
   }) as HTMLInputElement;
   const error = h('p', { id: 'nombre-error', class: 'error-campo', 'aria-live': 'polite' });
 
+  // Pregunta si se incluye el contenido bíblico (se puede cambiar luego en Configuración).
+  let biblico = app.g.config.contenidoBiblico;
+  const opcionesBiblia = h('div', { class: 'segmentado', role: 'group', 'aria-label': '¿Incluir contenido bíblico?' });
+  const pintarBiblia = () =>
+    opcionesBiblia.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-pressed', String((i === 0) === biblico)));
+  opcionesBiblia.append(
+    boton('Sí, con la Biblia', () => {
+      biblico = true;
+      pintarBiblia();
+    }, { icono: '📖', variante: 'secundario' }),
+    boton('No, solo animalitos', () => {
+      biblico = false;
+      pintarBiblia();
+    }, { icono: '🐾', variante: 'secundario' }),
+  );
+  pintarBiblia();
+
   const comenzar = (nombre: string | null, invitado: boolean) => {
+    app.g.config.contenidoBiblico = biblico;
     app.g.nombre = nombre;
     app.g.invitado = invitado;
     app.guardar();
@@ -49,6 +65,13 @@ export function pantallaBienvenida(): Pantalla {
       error,
     ),
     h(
+      'div',
+      { class: 'campo' },
+      h('span', { class: 'etiqueta', text: '¿Quieres incluir versículos y preguntas de la Biblia?' }),
+      opcionesBiblia,
+      h('p', { class: 'texto-suave', text: 'Puedes cambiarlo cuando quieras en Configuración.' }),
+    ),
+    h(
       'button',
       { type: 'submit', class: 'btn btn-primario btn-grande' },
       h('span', { class: 'btn-icono', 'aria-hidden': 'true', text: '▶' }),
@@ -65,9 +88,7 @@ export function pantallaBienvenida(): Pantalla {
       { class: 'tarjeta pila' },
       h('div', { class: 'bienvenida-fichas', 'aria-hidden': 'true' }, miniFicha('cordero'), miniFicha('arpa'), miniFicha('paloma')),
       h('h1', { text: '¡Bienvenido a McL Tiles!' }),
-      h('div', { class: 'centrado' }, logo()),
-      h('p', { class: 'texto-grande' }, 'Junta tres fichas iguales y recibe un versículo de la Biblia en cada nivel.'),
-      h('blockquote', { class: 'texto-suave', text: `«${textoVisible(bendicion)}» — ${bendicion.ref}` }),
+      h('p', { class: 'texto-grande' }, 'Junta tres fichas iguales. Es fácil, tranquilo y sin apuro.'),
       formulario,
     ),
   );

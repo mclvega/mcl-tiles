@@ -6,6 +6,8 @@ export type TamanoTexto = 'normal' | 'grande' | 'muyGrande';
 export type Tema = 'claro' | 'oscuro' | 'auto';
 
 export interface Configuracion {
+  /** Versículos, Biblia y preguntas bíblicas. Si es false, el juego usa solo la temática de animalitos. */
+  contenidoBiblico: boolean;
   dificultad: Dificultad;
   ayudaAutomatica: boolean;
   avisoBandeja: boolean;
@@ -36,6 +38,7 @@ function prefiereMenosMovimiento(): boolean {
 
 export function configPorDefecto(): Configuracion {
   return {
+    contenidoBiblico: true,
     dificultad: 'facil',
     ayudaAutomatica: true,
     avisoBandeja: true,
@@ -67,6 +70,7 @@ export function normalizarConfig(entrada: unknown): Configuracion {
   const d = configPorDefecto();
   const c = (entrada && typeof entrada === 'object' ? entrada : {}) as Record<string, unknown>;
   return {
+    contenidoBiblico: bool(c.contenidoBiblico, d.contenidoBiblico),
     dificultad: uno(c.dificultad, Object.keys(MODOS) as Dificultad[], d.dificultad),
     ayudaAutomatica: bool(c.ayudaAutomatica, d.ayudaAutomatica),
     avisoBandeja: bool(c.avisoBandeja, d.avisoBandeja),

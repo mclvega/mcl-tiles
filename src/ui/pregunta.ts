@@ -22,7 +22,7 @@ export interface OpcionesPregunta {
  */
 export function abrirPregunta(opciones: OpcionesPregunta): Promise<boolean> {
   return new Promise((resolver) => {
-    const pregunta = preguntaNumero(app.g.indicePregunta);
+    const pregunta = preguntaNumero(app.g.indicePregunta, app.biblico());
     app.g.indicePregunta++;
     app.guardar();
     const mostradas = opcionesBarajadas(pregunta, String(app.g.indicePregunta));

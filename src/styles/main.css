@@ -1188,3 +1188,102 @@ h1:focus {
 @media (max-width: 600px) {
   .movimientos .mov-texto { display: none; }
 }
+
+/* ---------- Inicio simple ---------- */
+.inicio-simple {
+  display: grid;
+  gap: 1.4rem;
+  max-width: 640px;
+  min-height: 100dvh;
+  align-content: start;
+}
+.inicio-simple h1 { font-size: 1.5rem; margin: 0.5rem 0 0; }
+.btn-jugar-grande {
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+  width: 100%;
+  min-height: 150px;
+  border-radius: 28px;
+  font-size: 2rem;
+  box-shadow: 0 8px 0 #10345e, 0 14px 26px rgba(29, 78, 137, 0.35);
+}
+.btn-jugar-grande:active { transform: translateY(5px); box-shadow: 0 3px 0 #10345e; }
+.btn-jugar-grande .jugar-icono { font-size: 2.6rem; line-height: 1; }
+.btn-jugar-grande small { font-size: 0.85rem; font-weight: 400; opacity: 0.9; }
+.atajos {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
+}
+.atajo {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.atajo .icono {
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 0 var(--primary-hover), var(--shadow);
+  font-size: 2rem;
+  transition: transform 0.12s ease;
+}
+.atajo:hover .icono { transform: translateY(-2px); }
+.atajo:active .icono { transform: translateY(3px); }
+.atajo .insignia { position: absolute; top: -6px; right: -10px; margin: 0; }
+.verso-dia {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.8rem 1rem;
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  border-left: 8px solid var(--gold);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.verso-texto { font-style: italic; font-size: 1rem; }
+.verso-ref { font-weight: 700; color: var(--accent); font-size: 0.85rem; }
+.enlaces-inicio {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1.2rem;
+  margin: 0;
+}
+.enlace {
+  min-height: 48px;
+  padding: 0 0.4rem;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (max-width: 420px) {
+  .atajo .icono { width: 60px; height: 60px; font-size: 1.7rem; }
+}
+.campo .etiqueta { font-weight: 700; }
+@media (max-width: 600px) {
+  .cabecera .chip-palabra { display: none; }
+  .inicio-simple .cabecera { flex-wrap: nowrap; }
+}

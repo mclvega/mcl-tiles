@@ -40,6 +40,8 @@ class Aplicacion {
   }
 
   ir(nombre: NombrePantalla, params: Record<string, unknown> = {}): void {
+    // Sin contenido bíblico, las pantallas de la Biblia no se muestran.
+    if (!this.g.config.contenidoBiblico && (nombre === 'biblia' || nombre === 'versiculos')) nombre = 'inicio';
     const constructor = this.pantallas.get(nombre);
     if (!constructor || !this.raiz) return;
     this.actual?.limpiar?.();
@@ -91,6 +93,11 @@ class Aplicacion {
     this.calidadMedida = true;
     const calidad = await efectos.medirRendimiento();
     if (this.g.config.calidad === 'auto') efectos.setCalidad(calidad);
+  }
+
+  /** El jugador eligió incluir versículos, Biblia y preguntas bíblicas. */
+  biblico(): boolean {
+    return this.g.config.contenidoBiblico;
   }
 
   /** La voz está activada y hay una voz en español disponible. */

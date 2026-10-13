@@ -102,6 +102,11 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
           avisar(`¡Listo, ${nombre}!`);
         }, { variante: 'primario', icono: '💾' }),
       ),
+      opcion(
+        'Contenido bíblico',
+        segmentado('contenidoBiblico', [[true, 'Sí'], [false, 'No']], 'Contenido bíblico'),
+        'Con «No» se ocultan los versículos, la Biblia y las fichas bíblicas, y las preguntas pasan a ser de animalitos.',
+      ),
     ),
   );
 

@@ -30,7 +30,7 @@ export async function celebrarNivel(opciones: {
   if (nuevo) g.nivelActual = n + 1;
   sumarTalentos(g, premioNivel(p, estrellas));
   // El versículo del nivel se guarda en «Mis versículos» (no se muestra aquí para que la pantalla sea corta).
-  if (!g.versiculos.some((v) => v.nivel === n)) g.versiculos.unshift({ id: versiculoDeNivel(n).id, nivel: n, fecha: claveDia() });
+  if (g.config.contenidoBiblico && !g.versiculos.some((v) => v.nivel === n)) g.versiculos.unshift({ id: versiculoDeNivel(n).id, nivel: n, fecha: claveDia() });
   delete g.fallos[n];
   app.guardar();
   opciones.alGuardar?.();
@@ -42,8 +42,9 @@ export async function celebrarNivel(opciones: {
 
   let finLibro: string | null = null;
   if (nuevo && ub.nivelEnLibro === NIVELES_POR_LIBRO) {
-    finLibro =
-      ub.libro === LIBROS.length - 1
+    finLibro = !app.biblico()
+      ? `🎉 ¡Completaste la etapa ${ub.libro + 1}!`
+      : ub.libro === LIBROS.length - 1
         ? `🎉 ¡Recorriste toda la Biblia! Empieza la vuelta ${ub.vuelta + 1} con fichas nuevas.`
         : `🎉 ¡Terminaste ${ub.nombreLibro}! Sigue ${LIBROS[ub.libro + 1]}.`;
   }
@@ -66,7 +67,7 @@ export async function celebrarNivel(opciones: {
     if (quiz) {
       // Quiz automático (sin preguntar): pregunta fácil, muestra el resultado y sigue solo.
       const acerto = await abrirPregunta({
-        titulo: '🧠 Quiz bíblico',
+        titulo: app.biblico() ? '🧠 Quiz bíblico' : '🧠 Quiz de animalitos',
         premio: `¡Pregunta fácil, ${app.nombre()}! Gana hasta ${PREMIOS.quiz.acierto} monedas.`,
         resultado: (ok) => `+${ok ? PREMIOS.quiz.acierto : PREMIOS.quiz.error} monedas 🪙`,
         textoContinuar: destino === 'siguiente' ? 'Seguir al próximo nivel' : 'Volver al inicio',

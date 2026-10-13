@@ -42,19 +42,19 @@ export function pantallaRecorrido(params: Record<string, unknown>): Pantalla {
     h(
       'section',
       { class: 'tarjeta pila' },
-      h('h2', { text: `${ub.nombreLibro}` }),
-      h('p', { class: 'texto-suave', text: `Vuelta ${ub.vuelta} · Libro ${ub.libro + 1} de ${LIBROS.length} · Niveles ${ub.primerNivel} a ${ub.primerNivel + NIVELES_POR_LIBRO - 1}` }),
+      h('h2', { text: app.biblico() ? ub.nombreLibro : `Etapa ${ub.libro + 1}` }),
+      h('p', { class: 'texto-suave', text: `Vuelta ${ub.vuelta} · ${app.biblico() ? 'Libro' : 'Etapa'} ${ub.libro + 1} de ${LIBROS.length} · Niveles ${ub.primerNivel} a ${ub.primerNivel + NIVELES_POR_LIBRO - 1}` }),
       h('p', { text: `Avance de la vuelta ${ub.vuelta}: ${porcentaje} %` }),
       h('div', { class: 'progreso', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': String(porcentaje) }, h('div', { style: { width: `${porcentaje}%` } })),
       h(
         'div',
         { class: 'fila-botones' },
-        boton('Libro anterior', () => app.ir('recorrido', { primerNivel: libroAnterior }), { icono: '◀', deshabilitado: libroAnterior < 1 }),
-        boton('Libro siguiente', () => app.ir('recorrido', { primerNivel: libroSiguiente }), { icono: '▶', deshabilitado: libroSiguiente > g.nivelActual }),
+        boton(app.biblico() ? 'Libro anterior' : 'Etapa anterior', () => app.ir('recorrido', { primerNivel: libroAnterior }), { icono: '◀', deshabilitado: libroAnterior < 1 }),
+        boton(app.biblico() ? 'Libro siguiente' : 'Etapa siguiente', () => app.ir('recorrido', { primerNivel: libroSiguiente }), { icono: '▶', deshabilitado: libroSiguiente > g.nivelActual }),
       ),
     ),
     niveles,
-    h('p', { class: 'texto-suave centrado', text: 'El recorrido no termina: después de Apocalipsis empieza una nueva vuelta con fichas nuevas.' }),
+    h('p', { class: 'texto-suave centrado', text: app.biblico() ? 'El recorrido no termina: después de Apocalipsis empieza una nueva vuelta con fichas nuevas.' : 'El recorrido no termina: siempre hay más niveles.' }),
   );
   return { el };
 }

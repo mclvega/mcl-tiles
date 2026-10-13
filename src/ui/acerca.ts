@@ -1,6 +1,6 @@
 import { app, type Pantalla } from '../app';
 import { CREDITO_RVR1960, VERSICULOS } from '../content/verses';
-import { PREGUNTAS } from '../content/quiz';
+import { PREGUNTAS, PREGUNTAS_ANIMALES } from '../content/quiz';
 import { MELODIAS } from '../content/melodias';
 import { boton, h } from './dom';
 
@@ -16,16 +16,16 @@ export function pantallaAcerca(): Pantalla {
       '¿Cómo se juega?',
       '1. Haz clic en una ficha con borde dorado: pasa a la bandeja de abajo.',
       '2. Cuando juntas tres fichas iguales en la bandeja, desaparecen.',
-      '3. Vacía el tablero para ganar el nivel y recibir un versículo de la Biblia.',
-      '4. Si la bandeja se llena, puedes responder una pregunta bíblica para seguir, usar una ayuda o intentarlo otra vez. No hay prisa ni tiempo límite.',
+      app.biblico() ? '3. Vacía el tablero para ganar el nivel y recibir un versículo de la Biblia.' : '3. Vacía el tablero para ganar el nivel.',
+      '4. Si la bandeja se llena, puedes responder una pregunta fácil para seguir, usar una ayuda o intentarlo otra vez. No hay prisa ni tiempo límite.',
       'También puedes jugar con el teclado: Tab para moverte entre las fichas libres, Enter para elegir y Esc para pausar.',
     ),
     seccion(
       'Un juego que no termina',
-      'Los niveles se crean solos y siempre tienen solución. Cada 20 niveles avanzas un libro de la Biblia, de Génesis a Apocalipsis, y después empieza una nueva vuelta.',
-      `Incluye ${VERSICULOS.length} versículos y ${PREGUNTAS.length} preguntas bíblicas que se van turnando.`,
+      app.biblico() ? 'Los niveles se crean solos y siempre tienen solución. Cada 20 niveles avanzas un libro de la Biblia, de Génesis a Apocalipsis, y después empieza una nueva vuelta.' : 'Los niveles se crean solos y siempre tienen solución. Cada 20 niveles completas una etapa y el juego sigue sin fin.',
+      app.biblico() ? `Incluye ${VERSICULOS.length} versículos y ${PREGUNTAS.length} preguntas bíblicas que se van turnando.` : `Incluye ${PREGUNTAS_ANIMALES.length} preguntas fáciles de animalitos que se van turnando.`,
     ),
-    seccion('Texto bíblico', CREDITO_RVR1960, 'Los versículos están guardados dentro del juego: se leen sin conexión y sin depender de otras páginas.'),
+    !app.biblico() ? null : seccion('Texto bíblico', CREDITO_RVR1960, 'Los versículos están guardados dentro del juego: se leen sin conexión y sin depender de otras páginas.'),
     seccion(
       'Música',
       `Arreglos instrumentales propios, generados en el navegador, de melodías de dominio público: ${MELODIAS.map((m) => m.nombre).join(', ')}.`,
@@ -34,7 +34,7 @@ export function pantallaAcerca(): Pantalla {
       'Privacidad',
       'Tu nombre y tu progreso se guardan solo en este navegador. No se envían a ningún servidor ni se usan para publicidad.',
     ),
-    seccion('Íconos', 'Las fichas son ilustraciones propias. Se usa la cruz vacía y símbolos bíblicos, sin imágenes de personas.'),
+    seccion('Íconos', 'Las fichas son ilustraciones propias: animalitos, instrumentos y símbolos, sin imágenes de personas.'),
   );
   return { el };
 }

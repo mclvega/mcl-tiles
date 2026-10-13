@@ -1,4 +1,5 @@
 import datos from '../data/preguntas.json';
+import datosAnimales from '../data/preguntas-animales.json';
 import { permutation, rngFrom, shuffle } from '../core/rng';
 
 export interface Pregunta {
@@ -11,13 +12,16 @@ export interface Pregunta {
 }
 
 export const PREGUNTAS: Pregunta[] = datos;
+/** Preguntas fáciles de animalitos, para cuando el contenido bíblico está apagado. */
+export const PREGUNTAS_ANIMALES: Pregunta[] = datosAnimales;
 
 /** Pregunta número i del recorrido: no se repite hasta agotar el banco. */
-export function preguntaNumero(i: number): Pregunta {
-  const total = PREGUNTAS.length;
+export function preguntaNumero(i: number, biblico = true): Pregunta {
+  const banco = biblico ? PREGUNTAS : PREGUNTAS_ANIMALES;
+  const total = banco.length;
   const ciclo = Math.floor(i / total);
-  const orden = permutation(total, `preguntas:${ciclo}`);
-  return PREGUNTAS[orden[i % total]];
+  const orden = permutation(total, `${biblico ? 'preguntas' : 'animales'}:${ciclo}`);
+  return banco[orden[i % total]];
 }
 
 export interface OpcionMostrada {

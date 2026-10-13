@@ -54,7 +54,7 @@ export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
   const pestanas = h(
     'div',
     { class: 'pestanas', role: 'group', 'aria-label': 'Categorías' },
-    ...(Object.keys(NOMBRES_CATEGORIA) as Categoria[]).map((c) => {
+    ...(Object.keys(NOMBRES_CATEGORIA) as Categoria[]).filter((c) => app.biblico() || c !== 'tarjeta').map((c) => {
       const b = boton(NOMBRES_CATEGORIA[c], () => app.ir('alfoli', { categoria: c }), { variante: 'secundario' });
       b.setAttribute('aria-pressed', String(c === categoria));
       return b;
@@ -90,7 +90,7 @@ export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
           h('div', { class: 'centrado', style: { fontSize: '2.6rem' }, 'aria-hidden': 'true', text: info.icono }),
           h('h3', { text: info.nombre }),
           h('p', { text: info.descripcion }),
-          h('p', { class: 'texto-suave', text: `Basado en ${info.ref} · Tienes: ${app.g.ayudas[id]}` }),
+          h('p', { class: 'texto-suave', text: app.biblico() ? `Basado en ${info.ref} · Tienes: ${app.g.ayudas[id]}` : `Tienes: ${app.g.ayudas[id]}` }),
           boton(`Canjear por ${info.precio} 🪙`, () => {
             const r = comprarAyuda(app.g, id);
             if (r === 'ok') {
@@ -114,7 +114,7 @@ export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
       'header',
       { class: 'cabecera' },
       boton('Volver', () => app.ir('inicio'), { icono: '←' }),
-      h('h1', { text: '🧺 El Alfolí' }),
+      h('h1', { text: app.biblico() ? '🧺 El Alfolí' : '🧺 Tienda' }),
       talentos.el,
     ),
     h('p', { class: 'texto-suave', text: 'Canjea las monedas que ganas jugando y respondiendo preguntas. Todo es gratis: no se usa dinero real.' }),

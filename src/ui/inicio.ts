@@ -1,9 +1,9 @@
 import { app, type Pantalla } from '../app';
-import { ubicarNivel, NIVELES_POR_LIBRO } from '../content/books';
-import { claveDia, versiculoDelDia } from '../content/verses';
+import { claveDia, textoVisible, versiculoDelDia } from '../content/verses';
 import { PREMIOS, puedePreguntaDelDia, registrarPreguntaDelDia, sumarTalentos } from '../economy/wallet';
-import { avisar, boton, h } from './dom';
-import { chipTalentos, logo, tarjetaVersiculo } from './componentes';
+import { voz } from '../speech';
+import { avisar, h } from './dom';
+import { chipTalentos, logo } from './componentes';
 import { abrirPregunta } from './pregunta';
 
 function saludo(): string {
@@ -13,14 +13,26 @@ function saludo(): string {
   return 'Buenas noches';
 }
 
+/** Botón redondo con ícono grande y nombre corto (mismo estilo que las ayudas del juego). */
+function atajo(icono: string, texto: string, alHacerClic: () => void, insignia?: { texto: string; ok?: boolean }): HTMLElement {
+  return h(
+    'button',
+    { type: 'button', class: 'atajo', onclick: alHacerClic, 'aria-label': insignia ? `${texto} (${insignia.texto})` : texto },
+    h('span', { class: 'icono', 'aria-hidden': 'true', text: icono }),
+    h('span', { class: 'atajo-texto', text: texto }),
+    insignia ? h('span', { class: `insignia ${insignia.ok ? 'ok' : ''}`, 'aria-hidden': 'true', text: insignia.texto }) : null,
+  );
+}
+
+/** Inicio simple: saludo, un botón grande para jugar y pocos atajos. */
 export function pantallaInicio(): Pantalla {
   const g = app.g;
   const n = g.nivelActual;
-  const ub = ubicarNivel(n);
   const talentos = chipTalentos();
   const hoy = claveDia();
+  const disponible = puedePreguntaDelDia(g, hoy);
 
-  const botonPregunta = boton('Pregunta del día', async () => {
+  const preguntaDelDia = async () => {
     if (!puedePreguntaDelDia(app.g, hoy)) {
       avisar('Ya respondiste la pregunta de hoy. ¡Vuelve mañana!');
       return;
@@ -29,50 +41,57 @@ export function pantallaInicio(): Pantalla {
     const acerto = await abrirPregunta({
       titulo: '❓ Pregunta del día',
       premio: `Responde y gana hasta ${PREMIOS.preguntaDia.acierto} monedas.`,
-      resultado: (ok) => {
-        const premio = ok ? PREMIOS.preguntaDia.acierto : PREMIOS.preguntaDia.error;
-        return `+${premio} monedas 🪙`;
-      },
+      resultado: (ok) => `+${ok ? PREMIOS.preguntaDia.acierto : PREMIOS.preguntaDia.error} monedas 🪙`,
+      autoCerrarMs: 3500,
     });
     sumarTalentos(app.g, acerto ? PREMIOS.preguntaDia.acierto : PREMIOS.preguntaDia.error);
     registrarPreguntaDelDia(app.g, hoy, ayer);
     app.guardar();
     app.ir('inicio');
-  }, { icono: '❓', variante: 'secundario' });
-  const disponible = puedePreguntaDelDia(g, hoy);
-  botonPregunta.append(h('span', { class: `insignia ${disponible ? '' : 'ok'}`, text: disponible ? '¡Nueva!' : 'Hecha ✔' }));
-  if (!disponible) botonPregunta.setAttribute('aria-disabled', 'true');
+  };
+
+  const verso = app.biblico() ? versiculoDelDia() : null;
+  const enlace = (texto: string, ir: () => void) => h('button', { type: 'button', class: 'enlace', onclick: ir, text: texto });
 
   const el = h(
     'main',
-    { class: 'pantalla pila' },
-    h('header', { class: 'cabecera' }, logo(), h('div', { class: 'fila-botones' }, talentos.el,
-      g.racha.dias > 1 ? h('span', { class: 'chip', text: `🔥 ${g.racha.dias} días seguidos` }) : null)),
+    { class: 'pantalla inicio-simple' },
+    h('header', { class: 'cabecera' }, logo(), talentos.el),
+    h('h1', { class: 'centrado', text: `${saludo()}, ${app.nombre()}` }),
     h(
-      'section',
-      { class: 'tarjeta saludo pila' },
-      h('h1', { text: `${saludo()}, ${app.nombre()} 🙏` }),
-      h('p', { class: 'texto-grande', text: 'Dios te bendiga. ¿Jugamos un rato juntos?' }),
-      h(
-        'button',
-        { type: 'button', class: 'btn btn-primario btn-grande btn-jugar', onclick: () => app.ir('juego', { nivel: n }) },
-        h('span', { class: 'btn-texto', text: `▶ Jugar · Nivel ${n}` }),
-        h('small', {
-          text: `${ub.nombreLibro} · nivel ${ub.nivelEnLibro} de ${NIVELES_POR_LIBRO}${ub.vuelta > 1 ? ` · Vuelta ${ub.vuelta}` : ''}`,
-        }),
-      ),
+      'button',
+      { type: 'button', class: 'btn btn-primario btn-jugar-grande', onclick: () => app.ir('juego', { nivel: n }) },
+      h('span', { class: 'jugar-icono', 'aria-hidden': 'true', text: '▶' }),
+      h('span', { class: 'btn-texto', text: 'Jugar' }),
+      h('small', { text: `Nivel ${n}` }),
     ),
-    tarjetaVersiculo(versiculoDelDia(), { titulo: '📖 Versículo del día' }),
     h(
       'nav',
-      { class: 'menu-inicio', 'aria-label': 'Menú principal' },
-      botonPregunta,
-      boton('El Alfolí (tienda)', () => app.ir('alfoli'), { icono: '🧺' }),
-      boton('Biblia', () => app.ir('biblia'), { icono: '📜' }),
-      boton('Mis versículos', () => app.ir('versiculos'), { icono: '📖' }),
-      boton('Recorrido', () => app.ir('recorrido'), { icono: '🗺️' }),
-      boton('Configuración', () => app.ir('configuracion'), { icono: '⚙️' }),
-      boton('Acerca del juego', () => app.ir('acerca'), { icono: 'ℹ️' }),
+      { class: 'atajos', 'aria-label': 'Menú principal' },
+      atajo('❓', 'Pregunta', () => void preguntaDelDia(), { texto: disponible ? '¡Nueva!' : '✔', ok: !disponible }),
+      atajo('🧺', 'Tienda', () => app.ir('alfoli')),
+      app.biblico() ? atajo('📖', 'Biblia', () => app.ir('biblia')) : null,
+      atajo('⚙️', 'Ajustes', () => app.ir('configuracion')),
+    ),
+    verso
+      ? h(
+          'button',
+          {
+            type: 'button',
+            class: 'verso-dia',
+            'aria-label': `Versículo del día: ${textoVisible(verso)} ${verso.ref}`,
+            onclick: () => (app.vozActiva() ? voz.hablar(`${textoVisible(verso)}. ${verso.ref}`) : app.ir('versiculos')),
+          },
+          h('span', { class: 'verso-texto', text: `«${textoVisible(verso)}»` }),
+          h('span', { class: 'verso-ref', text: verso.ref }),
+        )
+      : null,
+    h(
+      'p',
+      { class: 'enlaces-inicio' },
+      enlace('🗺️ Recorrido', () => app.ir('recorrido')),
+      app.biblico() ? enlace('⭐ Mis versículos', () => app.ir('versiculos')) : null,
+      enlace('ℹ️ Acerca', () => app.ir('acerca')),
     ),
   );
   return { el };

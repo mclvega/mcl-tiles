@@ -25,6 +25,9 @@ import { celebrarNivel } from './finNivel';
 import { pantallaBolitas } from './bolitas';
 
 const ANIMOS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Gloria a Dios!', '¡Sigue así, {n}!', '¡Qué bendición!'];
+const ANIMOS_NEUTROS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Genial!', '¡Sigue así, {n}!', '¡Qué bien!'];
+/** Fichas con símbolos bíblicos: no se usan si el contenido bíblico está apagado. */
+const FICHAS_BIBLICAS = new Set(['cruz', 'biblia', 'zarza', 'arca']);
 const ESPERA_PISTA_MS = 15000;
 const DESPLAZAMIENTO_CAPA = 0.16;
 const PREMIO_DORADO = 3;
@@ -37,9 +40,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const p = paramsNivel(n, g.config.dificultad, masFacil);
   if (p.modalidad === 'bolitas') return pantallaBolitas(n, p);
   const tema = p.modalidad === 'animalitos' ? temaDeNivel(n) : null;
-  const pool = tema ? poolDeTema(tema) : poolDeVuelta(ub.vuelta);
+  const pool = tema ? poolDeTema(tema) : poolDeVuelta(ub.vuelta).filter((t) => app.biblico() || !FICHAS_BIBLICAS.has(t));
   const versiculo = versiculoDeNivel(n);
-  const tablero = generarTablero(p, { pool, protagonista: protagonistaDe(versiculo, pool) });
+  const tablero = generarTablero(p, { pool, protagonista: app.biblico() ? protagonistaDe(versiculo, pool) : null });
   const partida = new Partida(tablero, p.bandeja);
 
   let ayudasGratis = p.ayudasGratis;
@@ -377,7 +380,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       await animarSalida(r.trio);
       triosHechos++;
       if (dorados.has(partida.tipo(id))) premioDorado();
-      if (triosHechos === 1 || triosHechos % 2 === 0) mostrarAnimo(ANIMOS[triosHechos % ANIMOS.length].replace('{n}', app.nombre()));
+      if (triosHechos === 1 || triosHechos % 2 === 0) mostrarAnimo((app.biblico() ? ANIMOS : ANIMOS_NEUTROS)[triosHechos % ANIMOS.length].replace('{n}', app.nombre()));
       pintarBandeja(partida.bandeja);
     }
     refrescarAyudas();
@@ -446,7 +449,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       'div',
       { class: 'pila' },
       h('p', { class: 'texto-grande', text: `Te faltan ${info.precio - app.g.talentos} monedas para «${info.nombre}».` }),
-      h('p', { text: 'Ganas monedas al completar niveles y al responder preguntas bíblicas.' }),
+      h('p', { text: 'Ganas monedas al completar niveles y al responder preguntas.' }),
     );
     const fila = h('div', { class: 'fila-botones' });
     if (restantes > 0) {

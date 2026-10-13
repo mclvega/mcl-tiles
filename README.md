@@ -9,6 +9,8 @@ Juego de fichas para el navegador. Se juntan tres fichas iguales y, al completar
 - **Preguntas bíblicas fáciles** con 3 opciones. Cada 2 o 3 niveles aparece solo un **quiz bíblico** con una pregunta fácil que da monedas, y al responder sigue al próximo nivel. También se usan en la pregunta del día y en la segunda oportunidad. El versículo de cada nivel se guarda en «Mis versículos». Equivocarse nunca castiga.
 - **Tienda "El Alfolí":** las monedas ganadas se canjean por ayudas, fondos, estilos de ficha, melodías y tarjetas de versículo. No se usa dinero real.
 - **Pide el nombre del jugador** y lo usa en los saludos. Solo se guarda en el navegador.
+- **Con o sin Biblia:** al empezar se pregunta si se incluye el contenido bíblico (también en Configuración). Con «No» se ocultan versículos, Biblia y fichas bíblicas, y las preguntas pasan a ser de animalitos.
+- **Tipos de nivel variados:** clásico, dorado (fichas que dan monedas extra), sorpresa (fichas boca abajo), torre, niveles de un solo animal (perritos, gatitos, vaquitas, caballitos, conejitos, pollitos) y el minijuego «Bolitas de colores» (combinar 3, con movimientos).
 - **Menú de Configuración:**
   - Dificultad (Muy fácil, Fácil, Normal y Desafío).
   - Gráficos: calidad y límite de FPS.
