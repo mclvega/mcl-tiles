@@ -40,6 +40,17 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
 
   let ayudasGratis = p.ayudasGratis;
   let ocupado = false;
+  /**
+   * Cola de acciones: los toques rápidos no se pierden, se procesan en orden.
+   * `finally` garantiza que la cola nunca quede trabada si algo falla.
+   */
+  let cola: Promise<unknown> = Promise.resolve();
+  const pendientes = new Set<number>();
+  function encolar<T>(accion: () => Promise<T>): Promise<T> {
+    const resultado = cola.then(accion, accion);
+    cola = resultado.catch((err) => console.error(err));
+    return resultado;
+  }
   let terminado = false;
   let temporizadorPista: number | undefined;
   let avisoBandejaMostrado = false;
@@ -88,7 +99,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       class: 'ficha',
       dataset: { id: String(f.id) },
       html: svgFicha(f.tipo),
-      onclick: () => void elegir(f.id),
+      onclick: () => tocar(f.id),
     });
     elementos.set(f.id, b);
     tableroEl.append(b);
@@ -198,7 +209,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 40}px) scale(${(1 + sx) / 2}, ${(1 + sy) / 2})`, offset: 0.5 },
         { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
       ],
-      { duration: 330, easing: 'ease-in-out' },
+      { duration: 260, easing: 'cubic-bezier(0.3, 0.7, 0.4, 1)' },
     );
     return anim.finished.then(
       () => clon.remove(),
@@ -216,7 +227,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       e.classList.add('sale');
     }
     audio.efecto('trio');
-    if (!reducidas()) await esperar(380);
+    if (!reducidas()) await esperar(300);
   }
 
   /* ---------- Pistas y tutorial ---------- */
@@ -269,10 +280,30 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
 
   /* ---------- Jugadas ---------- */
 
+  /** Toque del jugador: respuesta visual inmediata y la jugada entra a la cola. */
+  function tocar(id: number): void {
+    if (terminado || pendientes.has(id) || !partida.enTablero[id]) return;
+    const b = elementos.get(id)!;
+    // Si no hay nada pendiente y está tapada, se avisa enseguida.
+    if (!partida.esLibre(id) && pendientes.size === 0) {
+      void elegir(id);
+      return;
+    }
+    if (pendientes.size >= 4) return;
+    pendientes.add(id);
+    b.classList.add('elegida');
+    void encolar(() => elegir(id)).finally(() => {
+      pendientes.delete(id);
+      b.classList.remove('elegida');
+    });
+  }
+
   async function elegir(id: number): Promise<void> {
-    if (ocupado || terminado || partida.estado !== 'jugando') return;
+    if (terminado || partida.estado !== 'jugando' || !partida.enTablero[id]) return;
     const b = elementos.get(id)!;
     if (!partida.esLibre(id)) {
+      // Una ficha encolada que sigue tapada se ignora en silencio.
+      if (pendientes.has(id)) return;
       audio.efecto('bloqueada');
       b.classList.remove('tiembla');
       void b.offsetWidth;
@@ -284,6 +315,14 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       return;
     }
     ocupado = true;
+    try {
+      await jugar(id, b);
+    } finally {
+      ocupado = false;
+    }
+  }
+
+  async function jugar(id: number, b: HTMLButtonElement): Promise<void> {
     quitarPista();
     const desde = b.getBoundingClientRect();
     const antes = [...partida.bandeja];
@@ -296,14 +335,16 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     pintarBandeja(visual, id);
     const destino = bandejaEl.querySelector<HTMLElement>(`.ficha-bandeja[data-id="${id}"]`);
     await volar(desde, destino, partida.tipo(id));
-    if (destino) destino.style.visibility = '';
+    if (destino) {
+      destino.style.visibility = '';
+      if (!reducidas()) destino.classList.add('asienta');
+    }
     if (r.trio) {
       await animarSalida(r.trio);
       triosHechos++;
       if (triosHechos === 1 || triosHechos % 2 === 0) mostrarAnimo(ANIMOS[triosHechos % ANIMOS.length].replace('{n}', app.nombre()));
       pintarBandeja(partida.bandeja);
     }
-    ocupado = false;
     refrescarAyudas();
     revisarAvisoBandeja();
     pasoTutorial();
@@ -339,7 +380,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
             disabled: puedeUsar(id) !== null && !(id === 'barajar' || id === 'lampara'),
             title: info.descripcion,
             'aria-label': `${info.nombre}: ${info.descripcion} (${etiqueta})`,
-            onclick: () => void usarAyuda(id),
+            onclick: () => void encolar(() => usarAyuda(id)),
           },
           h('span', { class: 'icono', 'aria-hidden': 'true', text: info.icono }),
           h('span', { text: info.nombre }),
@@ -395,7 +436,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   }
 
   async function usarAyuda(id: IdAyuda): Promise<boolean> {
-    if (ocupado || terminado) return false;
+    if (terminado) return false;
     const motivo = puedeUsar(id);
     if (motivo) {
       avisar(motivo);
@@ -414,8 +455,12 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     }
     ocupado = true;
     quitarPista();
-    const ok = await efectoAyuda(id);
-    ocupado = false;
+    let ok = false;
+    try {
+      ok = await efectoAyuda(id);
+    } finally {
+      ocupado = false;
+    }
     if (!ok) {
       if (fuente === 'gratis') ayudasGratis++;
       else app.g.ayudas[id]++;

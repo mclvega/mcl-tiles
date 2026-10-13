@@ -432,6 +432,21 @@ h1:focus {
   transition: transform 0.15s ease, filter 0.25s ease, box-shadow 0.2s ease;
   font: inherit;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+.ficha:focus { outline: none; }
+.ficha:focus-visible {
+  outline: none;
+  box-shadow:
+    0 var(--canto) 0 var(--ficha-canto),
+    0 0 0 5px var(--focus);
+}
+.ficha.libre:active,
+.ficha.elegida {
+  transform: translateY(2px) scale(0.92);
+  transition-duration: 0.08s;
 }
 .ficha svg { display: block; width: 86%; height: 86%; pointer-events: none; }
 .ficha.libre { border-color: var(--ficha-libre); }
@@ -554,7 +569,7 @@ h1:focus {
   padding: 0;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 14%;
   background: var(--ficha-cara);
   border: 3px solid var(--ficha-libre);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
@@ -864,4 +879,12 @@ h1:focus {
   .ayuda { min-height: 54px; }
   .ayuda .icono { font-size: 1.6rem; }
   .ayuda .cuenta { top: -8px; right: 50%; transform: translateX(50%); white-space: nowrap; font-size: 0.6rem; padding: 0 0.35rem; }
+}
+
+/* Toques en celulares y botones: sin el recuadro gris del navegador. */
+.btn, .ayuda, .ranura { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.ficha-bandeja.asienta { animation: asentar 0.22s ease-out; }
+@keyframes asentar {
+  0% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
