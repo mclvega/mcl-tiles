@@ -2,6 +2,7 @@ import { app, type Pantalla } from '../app';
 import { audio } from '../audio';
 import { ubicarNivel } from '../content/books';
 import { FICHAS_POR_ID, poolDeVuelta, svgFicha } from '../content/tiles';
+import { poolDeTema, temaDeNivel } from '../content/animalitos';
 import { claveDia, protagonistaDe, versiculoDeNivel } from '../content/verses';
 import { MODALIDADES, paramsNivel } from '../core/difficulty';
 import { Partida, type EstadoPartida } from '../core/game';
@@ -35,13 +36,17 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const masFacil = g.masFacil.includes(n);
   const p = paramsNivel(n, g.config.dificultad, masFacil);
   if (p.modalidad === 'bolitas') return pantallaBolitas(n, p);
-  const pool = poolDeVuelta(ub.vuelta);
+  const tema = p.modalidad === 'animalitos' ? temaDeNivel(n) : null;
+  const pool = tema ? poolDeTema(tema) : poolDeVuelta(ub.vuelta);
   const versiculo = versiculoDeNivel(n);
   const tablero = generarTablero(p, { pool, protagonista: protagonistaDe(versiculo, pool) });
   const partida = new Partida(tablero, p.bandeja);
 
   let ayudasGratis = p.ayudasGratis;
   let ocupado = false;
+  function etiquetaModalidad(): string {
+    return tema ? `${tema.icono} ${tema.nombre}` : `${MODALIDADES[p.modalidad].icono} ${MODALIDADES[p.modalidad].nombre}`;
+  }
   /** Monedas extra ganadas en el nivel (fichas doradas). */
   let monedasExtra = 0;
   const dorados = new Set(tablero.dorados);
@@ -77,7 +82,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
 
   const subtitulo = [
     p.tipoNivel === 'reto' ? '⭐ Nivel reto · premio doble' : '',
-    p.modalidad !== 'clasico' ? `${MODALIDADES[p.modalidad].icono} ${MODALIDADES[p.modalidad].nombre}` : '',
+    p.modalidad !== 'clasico' ? etiquetaModalidad() : '',
     masFacil ? '🙂 Más fácil' : '',
   ]
     .filter(Boolean)
@@ -728,7 +733,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   requestAnimationFrame(() => {
     distribuir();
     if (p.modalidad !== 'clasico' || p.tipoNivel === 'reto') {
-      const texto = p.tipoNivel === 'reto' ? '⭐ Nivel reto' : `${MODALIDADES[p.modalidad].icono} ${MODALIDADES[p.modalidad].nombre}`;
+      const texto = p.tipoNivel === 'reto' ? '⭐ Nivel reto' : etiquetaModalidad();
       setTimeout(() => mostrarAnimo(texto), 250);
     }
     pasoTutorial();

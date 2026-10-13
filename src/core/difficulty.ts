@@ -28,8 +28,9 @@ export type TipoNivel = 'tutorial' | 'reto' | 'normal';
  * - sorpresa: las fichas tapadas están boca abajo y se revelan al liberarse.
  * - torre: más capas, pero menos tipos de ficha.
  * - bolitas: minijuego de combinar 3 bolitas de colores (estilo «candy»).
+ * - animalitos: todas las fichas son de un mismo animal (perritos, gatitos…).
  */
-export type Modalidad = 'clasico' | 'dorado' | 'sorpresa' | 'torre' | 'bolitas';
+export type Modalidad = 'clasico' | 'dorado' | 'sorpresa' | 'torre' | 'bolitas' | 'animalitos';
 
 export const MODALIDADES: Record<Modalidad, { nombre: string; icono: string }> = {
   clasico: { nombre: 'Clásico', icono: '🧩' },
@@ -37,6 +38,7 @@ export const MODALIDADES: Record<Modalidad, { nombre: string; icono: string }> =
   sorpresa: { nombre: 'Nivel sorpresa', icono: '🎁' },
   torre: { nombre: 'Nivel torre', icono: '🗼' },
   bolitas: { nombre: 'Bolitas de colores', icono: '🔴' },
+  animalitos: { nombre: 'Animalitos', icono: '🐾' },
 };
 
 /** Rotación de modalidades: el tutorial y los niveles reto son clásicos. */
@@ -48,6 +50,8 @@ export function modalidadDe(n: number, dificultad: Dificultad = 'normal'): Modal
       return n >= 7 ? 'bolitas' : 'clasico';
     case 2:
       return 'dorado';
+    case 3:
+      return n >= 9 ? 'animalitos' : 'clasico';
     case 4:
       return n >= 12 && dificultad !== 'muyFacil' ? 'sorpresa' : 'dorado';
     case 5:

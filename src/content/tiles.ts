@@ -1,3 +1,5 @@
+import { FICHAS_ANIMALITOS } from './animalitos';
+
 /**
  * Catálogo de fichas. Cada ícono es un SVG propio (viewBox 64x64) con contorno
  * grueso y color plano, para que se distinga por forma y por color.
@@ -326,7 +328,7 @@ export const FICHAS: TipoFicha[] = [
   ),
 ];
 
-export const FICHAS_POR_ID = new Map(FICHAS.map((f) => [f.id, f]));
+export const FICHAS_POR_ID = new Map([...FICHAS, ...FICHAS_ANIMALITOS].map((f) => [f.id, f]));
 
 export function svgFicha(id: string): string {
   const f = FICHAS_POR_ID.get(id);
