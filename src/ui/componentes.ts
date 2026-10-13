@@ -18,11 +18,11 @@ export function miniFicha(tipo: string, clase = 'mini-ficha'): HTMLElement {
   return h('span', { class: `ficha-bandeja ${clase}`, style: { position: 'relative', display: 'inline-block', aspectRatio: '1 / 1.15' }, html: svgFicha(tipo) });
 }
 
-/** Chip con los talentos; devuelve el elemento y una función para refrescarlo. */
+/** Chip con las monedas; devuelve el elemento y una función para refrescarlo. */
 export function chipTalentos(): { el: HTMLElement; refrescar: () => void } {
   const el = h('span', { class: 'chip', 'aria-live': 'polite' });
   const refrescar = () => {
-    el.textContent = `🪙 ${app.g.talentos} talentos`;
+    el.replaceChildren(`🪙 ${app.g.talentos}`, h('span', { class: 'chip-palabra', text: ' monedas' }));
   };
   refrescar();
   return { el, refrescar };

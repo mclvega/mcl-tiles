@@ -1,4 +1,4 @@
-/** Catálogo de la tienda "El Alfolí". Todo se canjea con talentos, sin dinero real. */
+/** Catálogo de la tienda "El Alfolí". Todo se canjea con monedas, sin dinero real. */
 export type IdAyuda = 'deshacer' | 'barajar' | 'lampara' | 'espacio';
 export type Categoria = 'ayuda' | 'fondo' | 'estilo' | 'melodia' | 'tarjeta';
 

@@ -45,7 +45,7 @@ const MUESTRA_TARJETA: Record<string, string> = {
   cielo: 'linear-gradient(180deg, #0f2547, #2c4f86)',
 };
 
-/** Tienda "El Alfolí" (Malaquías 3:10): se canjean talentos por ayudas y adornos. */
+/** Tienda "El Alfolí" (Malaquías 3:10): se canjean monedas por ayudas y adornos. */
 export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
   const categoria = (typeof params.categoria === 'string' ? params.categoria : 'ayuda') as Categoria;
   const talentos = chipTalentos();
@@ -64,12 +64,12 @@ export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
   const hoy = claveDia();
   const restantes = ganaTalentosRestantes(app.g, hoy);
   const ganar = boton(
-    restantes > 0 ? `Gana talentos con una pregunta (quedan ${restantes} hoy)` : 'Ya respondiste las preguntas de hoy',
+    restantes > 0 ? `Gana monedas con una pregunta (quedan ${restantes} hoy)` : 'Ya respondiste las preguntas de hoy',
     async () => {
       const acerto = await abrirPregunta({
-        titulo: '🙋 Gana talentos',
-        premio: `Responde y gana ${PREMIOS.ganaTalentos.acierto} talentos.`,
-        resultado: (ok) => `+${ok ? PREMIOS.ganaTalentos.acierto : PREMIOS.ganaTalentos.error} talentos 🪙`,
+        titulo: '🙋 Gana monedas',
+        premio: `Responde y gana ${PREMIOS.ganaTalentos.acierto} monedas.`,
+        resultado: (ok) => `+${ok ? PREMIOS.ganaTalentos.acierto : PREMIOS.ganaTalentos.error} monedas 🪙`,
       });
       sumarTalentos(app.g, acerto ? PREMIOS.ganaTalentos.acierto : PREMIOS.ganaTalentos.error);
       registrarGanaTalentos(app.g, hoy);
@@ -98,7 +98,7 @@ export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
               audio.efecto('canje');
               avisar(`¡Listo! Ahora tienes ${app.g.ayudas[id]} «${info.nombre}».`);
               recargar();
-            } else avisar('No tienes suficientes talentos todavía.');
+            } else avisar('No tienes suficientes monedas todavía.');
           }, { variante: 'primario', deshabilitado: app.g.talentos < info.precio }),
         ),
       );
@@ -117,7 +117,7 @@ export function pantallaAlfoli(params: Record<string, unknown>): Pantalla {
       h('h1', { text: '🧺 El Alfolí' }),
       talentos.el,
     ),
-    h('p', { class: 'texto-suave', text: 'Canjea los talentos que ganas jugando y respondiendo preguntas. Todo es gratis: no se usa dinero real.' }),
+    h('p', { class: 'texto-suave', text: 'Canjea las monedas que ganas jugando y respondiendo preguntas. Todo es gratis: no se usa dinero real.' }),
     ganar,
     pestanas,
     lista,
@@ -159,7 +159,7 @@ function tarjetaArticulo(art: Articulo, recargar: () => void): HTMLElement {
   if (!comprado) {
     acciones.append(
       boton(`Canjear por ${art.precio} 🪙`, async () => {
-        const ok = await confirmar(art.nombre, `¿Canjear ${art.precio} talentos por «${art.nombre}»?`, `Sí, canjear`);
+        const ok = await confirmar(art.nombre, `¿Canjear ${art.precio} monedas por «${art.nombre}»?`, `Sí, canjear`);
         if (!ok) return;
         const r = comprarArticulo(app.g, art.id);
         if (r === 'ok') {
@@ -167,7 +167,7 @@ function tarjetaArticulo(art: Articulo, recargar: () => void): HTMLElement {
           audio.efecto('canje');
           avisar(`¡«${art.nombre}» es tuyo y ya está en uso!`);
           recargar();
-        } else avisar('No tienes suficientes talentos todavía.');
+        } else avisar('No tienes suficientes monedas todavía.');
       }, { variante: 'primario', deshabilitado: app.g.talentos < art.precio }),
     );
   } else if (estaEquipado(art)) {

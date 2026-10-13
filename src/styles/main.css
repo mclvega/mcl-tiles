@@ -376,14 +376,13 @@ h1:focus {
   height: 100dvh;
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
     'barra barra'
-    'tutorial tutorial'
     'tablero ayudas'
     'bandeja ayudas';
-  gap: 10px;
-  padding: 10px 16px 14px;
+  gap: 6px 12px;
+  padding: 6px 12px 10px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -391,27 +390,22 @@ h1:focus {
   grid-area: barra;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
 }
-.titulo-nivel { flex: 1 1 auto; text-align: center; }
-.titulo-nivel h1 { font-size: 1.3rem; margin: 0; }
-.titulo-nivel span { color: var(--text-2); font-size: 0.85rem; }
-.mensaje-juego {
-  grid-area: tutorial;
-  display: none;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--surface);
-  border: 3px solid var(--gold);
-  border-radius: 16px;
-  padding: 0.5rem 0.9rem;
-  font-size: 1.05rem;
-  font-weight: 700;
+.barra-juego .btn { min-height: 48px; padding: 0.3rem 0.8rem; }
+.barra-juego .chip { padding: 0.25rem 0.7rem; font-size: 0.85rem; }
+.titulo-nivel {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.mensaje-juego.visible { display: flex; }
-.mensaje-juego p { margin: 0; flex: 1; }
-.mensaje-juego.alerta { border-color: #e08a00; background: var(--warn-bg); color: var(--warn); }
+.titulo-nivel h1 { font-size: 1.15rem; margin: 0; }
+.titulo-nivel span { color: var(--text-2); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; }
 
 .zona-tablero {
   grid-area: tablero;
@@ -496,7 +490,7 @@ h1:focus {
   50% { transform: translate(0, -12px); }
 }
 
-.zona-bandeja { grid-area: bandeja; display: grid; justify-items: center; gap: 0.3rem; }
+.zona-bandeja { grid-area: bandeja; display: grid; justify-items: center; }
 .bandeja {
   --tam-bandeja: 72px;
   display: flex;
@@ -538,7 +532,14 @@ h1:focus {
   40% { transform: scale(1.22); opacity: 1; }
   100% { transform: scale(0.2); opacity: 0; }
 }
-.estado-bandeja { font-weight: 700; color: var(--text-2); font-size: 0.9rem; }
+.estado-bandeja {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
 .ficha-volando {
   position: fixed;
@@ -566,11 +567,11 @@ h1:focus {
   display: grid;
   justify-items: center;
   gap: 0.1rem;
-  width: 132px;
-  min-height: 92px;
-  padding: 0.45rem 0.4rem;
+  width: 112px;
+  min-height: 78px;
+  padding: 0.35rem 0.3rem;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.15;
   color: var(--text);
@@ -583,7 +584,7 @@ h1:focus {
 }
 .ayuda:hover:not(:disabled) { transform: translateY(-2px); }
 .ayuda:disabled { opacity: 0.5; cursor: not-allowed; }
-.ayuda .icono { font-size: 1.8rem; line-height: 1.1; }
+.ayuda .icono { font-size: 1.6rem; line-height: 1.1; }
 .ayuda .cuenta {
   position: absolute;
   top: -10px;
@@ -600,12 +601,15 @@ h1:focus {
 @media (max-width: 900px), (max-aspect-ratio: 1/1) {
   .juego {
     grid-template-columns: 1fr;
-    grid-template-areas: 'barra' 'tutorial' 'tablero' 'bandeja' 'ayudas';
-    grid-template-rows: auto auto 1fr auto auto;
-    padding: 8px 10px 10px;
+    grid-template-areas: 'barra' 'tablero' 'bandeja' 'ayudas';
+    grid-template-rows: auto 1fr auto auto;
+    padding: 6px 8px 8px;
   }
-  .ayudas { grid-auto-flow: column; grid-auto-columns: 1fr; }
-  .ayuda { width: auto; min-height: 80px; }
+  .ayudas { grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+  .ayuda { width: auto; min-height: 64px; padding: 0.25rem 0.2rem; }
+  .ayuda .icono { font-size: 1.35rem; }
+  .barra-juego .btn-texto { display: none; }
+  .titulo-nivel span { display: none; }
 }
 
 /* ---------- Modales ---------- */
@@ -834,6 +838,7 @@ h1:focus {
 }
 
 /* Ajustes para pantallas angostas: nada debe desbordar a lo ancho. */
+.juego { overflow: hidden; }
 .juego > * { min-width: 0; }
 .titulo-nivel { min-width: 0; }
 @media (max-width: 900px), (max-aspect-ratio: 1/1) {
@@ -841,4 +846,16 @@ h1:focus {
   .bandeja { gap: 4px; padding: 6px; }
   .ayuda { min-width: 0; }
   .ayuda .cuenta { right: -2px; font-size: 0.65rem; }
+}
+
+/* Celulares: el tablero manda. Ayudas solo con ícono y encabezado mínimo. */
+@media (max-width: 600px) {
+  .barra-juego .chip-palabra { display: none; }
+  .barra-juego .chip { font-size: 0.8rem; }
+  .titulo-nivel h1 { font-size: 1rem; }
+  .ayuda > span:not(.icono):not(.cuenta) { display: none; }
+  .ayudas { margin-top: 6px; }
+  .ayuda { min-height: 54px; }
+  .ayuda .icono { font-size: 1.6rem; }
+  .ayuda .cuenta { top: -8px; right: 50%; transform: translateX(50%); white-space: nowrap; font-size: 0.6rem; padding: 0 0.35rem; }
 }

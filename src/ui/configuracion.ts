@@ -242,7 +242,7 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
         boton('Reiniciar todo el progreso', async () => {
           const ok = await confirmar(
             'Reiniciar progreso',
-            'Se borrarán tus niveles, talentos, versículos y compras. Esta acción no se puede deshacer. ¿Seguro?',
+            'Se borrarán tus niveles, monedas, versículos y compras. Esta acción no se puede deshacer. ¿Seguro?',
             'Sí, borrar todo',
           );
           if (!ok) return;

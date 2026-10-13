@@ -7,7 +7,7 @@ Juego de fichas para el navegador. Se juntan tres fichas iguales y, al completar
 - **Fichas coloridas:** animalitos (cordero, paloma, león, camello, burrito, ranita, abejita…), instrumentos de alabanza (arpa, shofar, pandero, guitarra, flauta, címbalos, tambor, campana, violín) y símbolos bíblicos. Son SVG propios, sin imágenes de personas.
 - **Biblia local:** 200 versículos RVR1960 incluidos en el juego. Se leen sin conexión y sin depender de otras páginas.
 - **Preguntas bíblicas fáciles** con 3 opciones. Se usan en el cofre de bendiciones (cada 3 niveles), en la pregunta del día y en la segunda oportunidad. Equivocarse nunca castiga.
-- **Tienda "El Alfolí":** los talentos ganados se canjean por ayudas, fondos, estilos de ficha, melodías y tarjetas de versículo. No se usa dinero real.
+- **Tienda "El Alfolí":** las monedas ganadas se canjean por ayudas, fondos, estilos de ficha, melodías y tarjetas de versículo. No se usa dinero real.
 - **Pide el nombre del jugador** y lo usa en los saludos. Solo se guarda en el navegador.
 - **Menú de Configuración:**
   - Dificultad (Muy fácil, Fácil, Normal y Desafío).
@@ -56,7 +56,7 @@ src/
 ├─ core/        # lógica pura: rng con semilla, figuras, dificultad, generador, solver y partida
 ├─ content/     # fichas (SVG), libros, versículos, preguntas y melodías
 ├─ data/        # versiculos.json (RVR1960) y preguntas.json
-├─ economy/     # talentos, tienda y premios
+├─ economy/     # monedas, tienda y premios
 ├─ settings/    # configuración y su validación
 ├─ fx/          # efectos en canvas (destellos, confeti, palomas) con límite de FPS
 ├─ ui/          # pantallas: bienvenida, inicio, juego, biblia, recorrido, alfolí, versículos, configuración y acerca

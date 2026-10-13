@@ -18,7 +18,6 @@ import {
   sumarTalentos,
 } from '../economy/wallet';
 import { efectos } from '../fx/loop';
-import { voz } from '../speech';
 import { chipTalentos, mostrarAnimo, tarjetaVersiculo } from './componentes';
 import { panelConfiguracion } from './configuracion';
 import { abrirModal, avisar, boton, confirmar, esperar, h, hayModalAbierto, type Modal } from './dom';
@@ -46,22 +45,12 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   let avisoBandejaMostrado = false;
   let triosHechos = 0;
   let avisoTapadaMostrado = false;
-  let mensajeEsAlerta = false;
   const tutorial = n <= 3;
   const reducidas = () => app.g.config.animacionesReducidas;
 
   /* ---------- Estructura ---------- */
 
   const talentos = chipTalentos();
-  const textoMensaje = h('p');
-  const botonOirMensaje = h('button', {
-    type: 'button',
-    class: 'btn btn-suave',
-    'aria-label': 'Escuchar el mensaje',
-    text: '🔊',
-    onclick: () => voz.hablar(textoMensaje.textContent ?? ''),
-  });
-  const mensaje = h('div', { class: 'mensaje-juego', role: 'status', 'aria-live': 'polite' }, textoMensaje, botonOirMensaje);
   const tableroEl = h('div', { class: 'tablero', role: 'group', 'aria-label': `Tablero del nivel ${n}` });
   const zonaTablero = h('div', { class: 'zona-tablero' }, tableroEl);
   const bandejaEl = h('div', { class: 'bandeja', role: 'list', 'aria-label': 'Bandeja' });
@@ -80,11 +69,10 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     h(
       'header',
       { class: 'barra-juego' },
-      boton('Pausa', () => abrirPausa(), { icono: '⏸', variante: 'secundario' }),
+      boton('Pausa', () => abrirPausa(), { icono: '⏸', variante: 'secundario', etiqueta: 'Pausa' }),
       h('div', { class: 'titulo-nivel' }, h('h1', { text: `Nivel ${n}` }), h('span', { text: subtitulo })),
       talentos.el,
     ),
-    mensaje,
     zonaTablero,
     h('div', { class: 'zona-bandeja' }, bandejaEl, estadoBandeja),
     ayudasEl,
@@ -113,7 +101,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     const cols = tablero.ancho / 2;
     const filas = tablero.alto / 2;
     const extra = (capas - 1) * DESPLAZAMIENTO_CAPA;
-    const tw = Math.max(30, Math.min(118, (zona.width - 8) / (cols + extra), (zona.height - 14) / (filas * 1.15 + extra + 0.1)));
+    const tw = Math.max(30, Math.min(150, (zona.width - 4) / (cols + extra), (zona.height - 8) / (filas * 1.15 + extra + 0.1)));
     const th = tw * 1.15;
     const s = tw * DESPLAZAMIENTO_CAPA;
     tableroEl.style.width = `${cols * tw + (capas - 1) * s}px`;
@@ -229,24 +217,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     if (!reducidas()) await esperar(380);
   }
 
-  /* ---------- Mensajes y tutorial ---------- */
-
-  function setMensaje(texto: string, opciones: { alerta?: boolean; hablar?: boolean } = {}): void {
-    textoMensaje.textContent = texto;
-    mensaje.classList.add('visible');
-    mensaje.classList.toggle('alerta', !!opciones.alerta);
-    mensajeEsAlerta = !!opciones.alerta;
-    botonOirMensaje.hidden = !app.vozActiva();
-    if (opciones.hablar && app.vozActiva()) voz.hablar(texto);
-    requestAnimationFrame(distribuir);
-  }
-
-  function ocultarMensaje(): void {
-    if (!mensaje.classList.contains('visible')) return;
-    mensaje.classList.remove('visible', 'alerta');
-    mensajeEsAlerta = false;
-    requestAnimationFrame(distribuir);
-  }
+  /* ---------- Pistas y tutorial ---------- */
 
   let mano: HTMLElement | null = null;
   function quitarPista(): void {
@@ -276,27 +247,10 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     }, ESPERA_PISTA_MS);
   }
 
+  /** Tutorial sin textos: la mano y el brillo señalan qué ficha elegir. */
   function pasoTutorial(): void {
     if (!tutorial || terminado) return;
-    const nombre = app.nombre();
-    if (n === 1) {
-      if (triosHechos === 0 && partida.bandeja.length === 0) {
-        setMensaje(`👆 Haz clic en una ficha que brille, ${nombre}. Las fichas con borde dorado están libres.`, { hablar: true });
-        mostrarPista(true);
-      } else if (triosHechos === 0) {
-        setMensaje('¡Muy bien! La ficha pasó a la bandeja de abajo. Ahora elige otra igual.', { hablar: true });
-        mostrarPista(true);
-      } else if (triosHechos === 1) {
-        setMensaje('¡Excelente! Tres fichas iguales desaparecen. Sigue así hasta vaciar el tablero.', { hablar: true });
-      } else ocultarMensaje();
-    } else if (n === 2) {
-      if (triosHechos === 0 && partida.bandeja.length === 0) {
-        setMensaje(`La bandeja tiene ${partida.capacidad} espacios. Si se llena, puedes intentarlo otra vez. ¡Sin prisa!`, { hablar: true });
-      } else if (triosHechos >= 1) ocultarMensaje();
-    } else if (n === 3) {
-      // Sin mensaje: en celulares con letra grande tapaba demasiado el tablero.
-      if (triosHechos === 0 && partida.bandeja.length === 0) mostrarPista(true);
-    }
+    if (triosHechos === 0 && (n !== 2 || partida.bandeja.length > 0)) mostrarPista(true);
   }
 
   function revisarAvisoBandeja(): void {
@@ -305,11 +259,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       if (!avisoBandejaMostrado) {
         avisoBandejaMostrado = true;
         audio.efecto('aviso');
-        setMensaje('¡Cuidado, la bandeja casi está llena! Busca fichas iguales a las de la bandeja.', { alerta: true });
       }
     } else {
       avisoBandejaMostrado = false;
-      if (mensajeEsAlerta) ocultarMensaje();
     }
   }
 
@@ -400,7 +352,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     if (app.g.talentos >= info.precio) {
       const ok = await confirmar(
         `${info.icono} ${info.nombre}`,
-        `No te quedan ayudas de este tipo. ¿Canjear ${info.precio} talentos por una? Tienes ${app.g.talentos}.`,
+        `No te quedan ayudas de este tipo. ¿Canjear ${info.precio} monedas por una? Tienes ${app.g.talentos}.`,
         `Sí, canjear ${info.precio} 🪙`,
       );
       if (ok && gastarTalentos(app.g, info.precio)) {
@@ -414,8 +366,8 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     const contenido = h(
       'div',
       { class: 'pila' },
-      h('p', { class: 'texto-grande', text: `Te faltan ${info.precio - app.g.talentos} talentos para «${info.nombre}».` }),
-      h('p', { text: 'Ganas talentos al completar niveles y al responder preguntas bíblicas.' }),
+      h('p', { class: 'texto-grande', text: `Te faltan ${info.precio - app.g.talentos} monedas para «${info.nombre}».` }),
+      h('p', { text: 'Ganas monedas al completar niveles y al responder preguntas bíblicas.' }),
     );
     const fila = h('div', { class: 'fila-botones' });
     if (restantes > 0) {
@@ -423,9 +375,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         boton(`Responder una pregunta (+${PREMIOS.ganaTalentos.acierto} 🪙)`, async () => {
           modal.cerrar();
           const acerto = await abrirPregunta({
-            titulo: '🙋 Gana talentos',
-            premio: `Responde y gana ${PREMIOS.ganaTalentos.acierto} talentos.`,
-            resultado: (ok) => `+${ok ? PREMIOS.ganaTalentos.acierto : PREMIOS.ganaTalentos.error} talentos 🪙`,
+            titulo: '🙋 Gana monedas',
+            premio: `Responde y gana ${PREMIOS.ganaTalentos.acierto} monedas.`,
+            resultado: (ok) => `+${ok ? PREMIOS.ganaTalentos.acierto : PREMIOS.ganaTalentos.error} monedas 🪙`,
           });
           sumarTalentos(app.g, acerto ? PREMIOS.ganaTalentos.acierto : PREMIOS.ganaTalentos.error);
           registrarGanaTalentos(app.g, claveDia());
@@ -436,7 +388,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     }
     fila.append(boton('Seguir jugando', () => modal.cerrar(), { variante: 'secundario' }));
     contenido.append(fila);
-    const modal = abrirModal({ titulo: 'Faltan talentos', contenido });
+    const modal = abrirModal({ titulo: 'Faltan monedas', contenido });
     return false;
   }
 
@@ -569,8 +521,8 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       premio: 'Responde esta pregunta para abrir el cofre.',
       resultado: (ok) =>
         ok
-          ? `+${PREMIOS.cofre.acierto} talentos y una ayuda «${AYUDAS[regalo].nombre}» de regalo 🎁`
-          : `+${PREMIOS.cofre.error} talentos 🪙`,
+          ? `+${PREMIOS.cofre.acierto} monedas y una ayuda «${AYUDAS[regalo].nombre}» de regalo 🎁`
+          : `+${PREMIOS.cofre.error} monedas 🪙`,
       textoContinuar: 'Seguir',
     });
     sumarTalentos(app.g, acerto ? PREMIOS.cofre.acierto : PREMIOS.cofre.error);
@@ -581,7 +533,6 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   async function victoria(): Promise<void> {
     terminado = true;
     window.clearTimeout(temporizadorPista);
-    ocultarMensaje();
     const g = app.g;
     const estrellas = partida.estrellas();
     const premio = premioNivel(p, estrellas);
@@ -629,7 +580,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         ...[1, 2, 3].map((i) => h('span', { class: i <= estrellas ? '' : 'apagada', 'aria-hidden': 'true', text: '⭐' })),
       ),
       h('p', { class: 'texto-grande centrado', text: `¡Bien hecho, ${app.nombre()}!` }),
-      h('p', { class: 'premio', text: `+${premio} talentos 🪙${p.tipoNivel === 'especial' ? ' (premio doble)' : ''}` }),
+      h('p', { class: 'premio', text: `+${premio} monedas 🪙${p.tipoNivel === 'especial' ? ' (premio doble)' : ''}` }),
       finLibro ? h('p', { class: 'respuesta bien', text: finLibro }) : null,
       cofrePendiente ? h('p', { class: 'centrado', text: '🎁 ¡Ganaste un cofre de bendiciones! Se abre al continuar.' }) : null,
       h('p', { class: 'texto-suave centrado', text: 'Tu versículo para hoy:' }),

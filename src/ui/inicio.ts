@@ -28,10 +28,10 @@ export function pantallaInicio(): Pantalla {
     const ayer = claveDia(new Date(Date.now() - 86400000));
     const acerto = await abrirPregunta({
       titulo: '❓ Pregunta del día',
-      premio: `Responde y gana hasta ${PREMIOS.preguntaDia.acierto} talentos.`,
+      premio: `Responde y gana hasta ${PREMIOS.preguntaDia.acierto} monedas.`,
       resultado: (ok) => {
         const premio = ok ? PREMIOS.preguntaDia.acierto : PREMIOS.preguntaDia.error;
-        return `+${premio} talentos 🪙`;
+        return `+${premio} monedas 🪙`;
       },
     });
     sumarTalentos(app.g, acerto ? PREMIOS.preguntaDia.acierto : PREMIOS.preguntaDia.error);
