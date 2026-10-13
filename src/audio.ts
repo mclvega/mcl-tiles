@@ -15,6 +15,8 @@ class MotorAudio {
   private reverb!: ConvolverNode;
   private volumenes = { general: 0.7, musica: 0.4, efectos: 0.7 };
   private melodiaActual: Melodia | null = null;
+  /** Melodía que debe sonar; se arranca en cuanto el navegador habilita el audio. */
+  private melodiaDeseada: string | null = null;
   private temporizador: number | null = null;
   private inicioCiclo = 0;
   private programadoHasta = 0;
@@ -24,7 +26,7 @@ class MotorAudio {
   /** Debe llamarse tras un gesto del usuario (política de reproducción automática). */
   iniciar(): void {
     if (this.ctx) {
-      if (this.ctx.state === 'suspended') void this.ctx.resume();
+      this.reanudar();
       return;
     }
     const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -48,10 +50,22 @@ class MotorAudio {
     mezclaReverb.connect(this.general);
     this.general.connect(this.ctx.destination);
     this.aplicarVolumenes();
+    // Algunos navegadores crean el audio suspendido aunque sea tras un clic, y lo
+    // habilitan un instante después: la música arranca cuando eso ocurre.
+    this.ctx.addEventListener('statechange', () => this.arrancarSiCorresponde());
+    this.reanudar();
+    this.arrancarSiCorresponde();
   }
 
-  get activo(): boolean {
-    return this.ctx !== null && this.ctx.state === 'running';
+  /** Ya se creó el contexto de audio (hubo un gesto del usuario). */
+  get iniciado(): boolean {
+    return this.ctx !== null;
+  }
+
+  private arrancarSiCorresponde(): void {
+    if (this.ctx?.state === 'running' && this.melodiaDeseada && this.temporizador === null) {
+      this.arrancarMelodia(this.melodiaDeseada);
+    }
   }
 
   private respuestaReverb(segundos: number): AudioBuffer {
@@ -89,16 +103,24 @@ class MotorAudio {
   }
 
   reanudar(): void {
-    if (this.ctx?.state === 'suspended') void this.ctx.resume();
+    if (this.ctx && this.ctx.state !== 'running' && this.ctx.state !== 'closed') {
+      this.ctx.resume().then(() => this.arrancarSiCorresponde(), () => undefined);
+    }
   }
 
   /* ---------- Música ---------- */
 
   reproducirMelodia(id: string): void {
-    if (!this.ctx) return;
+    this.melodiaDeseada = id;
+    if (this.melodiaActual?.id === id && this.temporizador !== null) return;
+    this.arrancarSiCorresponde();
+    if (this.melodiaActual && this.melodiaActual.id !== id) this.arrancarMelodia(id);
+  }
+
+  private arrancarMelodia(id: string): void {
+    if (!this.ctx || this.ctx.state !== 'running') return;
     const melodia = MELODIAS_POR_ID.get(id) ?? MELODIAS_POR_ID.get('gracia')!;
-    if (this.melodiaActual?.id === melodia.id && this.temporizador !== null) return;
-    this.detenerMusica();
+    this.pararProgramacion();
     this.melodiaActual = melodia;
     const tiempo = 60 / melodia.tempo;
     this.eventos = [];
@@ -126,6 +148,11 @@ class MotorAudio {
   }
 
   detenerMusica(): void {
+    this.melodiaDeseada = null;
+    this.pararProgramacion();
+  }
+
+  private pararProgramacion(): void {
     if (this.temporizador !== null) window.clearInterval(this.temporizador);
     this.temporizador = null;
     this.melodiaActual = null;

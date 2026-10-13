@@ -31,15 +31,16 @@ app.montar(document.getElementById('app')!);
 app.aplicarConfig();
 app.ir(app.g.nombre || app.g.invitado ? 'inicio' : 'bienvenida');
 
-// El audio solo puede empezar después de un gesto del usuario.
+// El audio solo puede empezar después de un gesto del usuario. Cada gesto
+// vuelve a intentarlo por si el navegador lo dejó suspendido.
 const iniciarAudio = () => {
+  const primeraVez = !audio.iniciado;
   audio.iniciar();
-  app.aplicarConfig();
-  window.removeEventListener('pointerdown', iniciarAudio);
-  window.removeEventListener('keydown', iniciarAudio);
+  if (primeraVez) app.aplicarConfig();
 };
 window.addEventListener('pointerdown', iniciarAudio);
 window.addEventListener('keydown', iniciarAudio);
+window.addEventListener('touchend', iniciarAudio);
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) audio.suspender();

@@ -79,7 +79,7 @@ class Aplicacion {
     efectos.setMostrarFps(c.mostrarFps);
     if (c.calidad !== 'auto') efectos.setCalidad(c.calidad);
     else if (!this.calidadMedida) efectos.setCalidad('alta');
-    if (audio.activo) {
+    if (audio.iniciado) {
       if (c.volumenMusica > 0 && c.volumenGeneral > 0) audio.reproducirMelodia(c.melodia);
       else audio.detenerMusica();
     }
