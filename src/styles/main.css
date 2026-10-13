@@ -1002,3 +1002,63 @@ h1:focus {
   0%, 55% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+/* ---------- Ayudas simplificadas: botón redondo, ícono grande, nombre corto y un número ---------- */
+.ayudas { gap: 14px; }
+.ayuda {
+  width: 96px;
+  min-height: 0;
+  padding: 0;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-size: 0.8rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.ayuda .icono {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 0 var(--primary-hover), var(--shadow);
+  font-size: 1.9rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.ayuda:hover:not(:disabled) { transform: none; }
+.ayuda:hover:not(:disabled) .icono { transform: translateY(-2px); }
+.ayuda:active:not(:disabled) .icono { transform: translateY(3px); box-shadow: 0 1px 0 var(--primary-hover); }
+.ayuda:disabled .icono { border-color: var(--border); box-shadow: none; }
+.ayuda .cuenta {
+  top: -6px;
+  right: 6px;
+  min-width: 30px;
+  padding: 0.1rem 0.45rem;
+  border: 2px solid var(--surface);
+  background: #1e7b45;
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+.ayuda .cuenta.precio { background: #b8860b; }
+@media (max-width: 900px), (max-aspect-ratio: 1/1) {
+  .ayuda { width: auto; }
+  .ayuda .icono { width: 54px; height: 54px; font-size: 1.6rem; }
+}
+@media (max-width: 600px) {
+  .ayuda > span:not(.icono):not(.cuenta) { display: block; font-size: 0.7rem; }
+  .ayuda .cuenta { top: -6px; right: calc(50% - 38px); transform: none; font-size: 0.75rem; }
+}
+.ayuda .cuenta.precio {
+  top: -10px;
+  right: -4px;
+  min-width: 0;
+  padding: 0 0.35rem;
+  font-size: 0.68rem;
+  opacity: 0.95;
+}
+@media (max-width: 600px) {
+  .ayuda .cuenta.precio { right: calc(50% - 46px); }
+}

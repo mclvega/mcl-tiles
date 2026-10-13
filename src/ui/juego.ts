@@ -372,8 +372,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     ayudasEl.replaceChildren(
       ...ORDEN_AYUDAS.map((id) => {
         const info = AYUDAS[id];
-        const tiene = app.g.ayudas[id];
-        const etiqueta = ayudasGratis > 0 ? `Gratis ×${ayudasGratis}` : tiene > 0 ? `×${tiene}` : `🪙${info.precio}`;
+        // Un solo número: cuántas puedes usar ahora (gratis del nivel + guardadas). Si no queda, su precio.
+        const disponibles = ayudasGratis + app.g.ayudas[id];
+        const etiqueta = disponibles > 0 ? String(disponibles) : `🪙${info.precio}`;
         return h(
           'button',
           {
@@ -381,12 +382,12 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
             class: 'ayuda',
             disabled: puedeUsar(id) !== null && !(id === 'barajar' || id === 'lampara'),
             title: info.descripcion,
-            'aria-label': `${info.nombre}: ${info.descripcion} (${etiqueta})`,
+            'aria-label': `${info.nombre}: ${info.descripcion} (${disponibles > 0 ? `quedan ${disponibles}` : `cuesta ${info.precio} monedas`})`,
             onclick: () => void encolar(() => usarAyuda(id)),
           },
           h('span', { class: 'icono', 'aria-hidden': 'true', text: info.icono }),
           h('span', { text: info.nombre }),
-          h('span', { class: `cuenta ${ayudasGratis > 0 ? 'gratis' : ''}`, 'aria-hidden': 'true', text: etiqueta }),
+          h('span', { class: `cuenta ${disponibles > 0 ? '' : 'precio'}`, 'aria-hidden': 'true', text: etiqueta }),
         );
       }),
     );
@@ -505,7 +506,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
           b.classList.add('gira');
         }
         refrescarLibres();
-        avisar('🌬️ ¡Viento recio! Las fichas se mezclaron.');
+        avisar('🔀 ¡Listo! Las fichas se mezclaron.');
         return true;
       }
       case 'lampara': {
@@ -525,7 +526,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         await animarSalida(r.desdeBandeja);
         if (!r.desdeBandeja.length) audio.efecto('trio');
         pintarBandeja(partida.bandeja);
-        mostrarAnimo('🪔 ¡Trío completado!');
+        mostrarAnimo('✨ ¡Trío completado!');
         return true;
       }
       case 'espacio': {
@@ -533,7 +534,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         audio.efecto('canje');
         distribuir();
         pintarBandeja(partida.bandeja, undefined, true);
-        avisar('⛺ ¡La bandeja tiene un espacio más!');
+        avisar('➕ ¡La bandeja tiene un espacio más!');
         return true;
       }
     }
@@ -712,10 +713,10 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       acciones.append(b);
     }
     if (partida.puedeDeshacer()) {
-      acciones.append(boton(`${AYUDAS.deshacer.nombre} (devolver la última ficha)`, () => void continuar(() => usarAyuda('deshacer')), { icono: AYUDAS.deshacer.icono, clase: 'btn-ancho' }));
+      acciones.append(boton('Deshacer la última ficha', () => void continuar(() => usarAyuda('deshacer')), { icono: AYUDAS.deshacer.icono, clase: 'btn-ancho' }));
     }
     if (partida.puedeAgrandar()) {
-      acciones.append(boton(`${AYUDAS.espacio.nombre} (un espacio más)`, () => void continuar(() => usarAyuda('espacio')), { icono: AYUDAS.espacio.icono, clase: 'btn-ancho' }));
+      acciones.append(boton('Un espacio más en la bandeja', () => void continuar(() => usarAyuda('espacio')), { icono: AYUDAS.espacio.icono, clase: 'btn-ancho' }));
     }
     acciones.append(boton('Intentar de nuevo', () => {
       modal.cerrar();

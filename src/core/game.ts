@@ -109,7 +109,7 @@ export class Partida {
     return { id, indice, trio, estado: this.actualizarEstado() };
   }
 
-  /** "Volver al camino": devuelve al tablero la última ficha si sigue en la bandeja. */
+  /** "Deshacer": devuelve al tablero la última ficha si sigue en la bandeja. */
   puedeDeshacer(): boolean {
     const ultima = this.historial[this.historial.length - 1];
     return ultima !== undefined && this.bandeja.includes(ultima);
@@ -138,7 +138,7 @@ export class Partida {
     return devueltas;
   }
 
-  /** "Ensancha tu tienda": un espacio más en la bandeja durante este nivel. */
+  /** "Más espacio": un espacio más en la bandeja durante este nivel. */
   puedeAgrandar(): boolean {
     return this.capacidad < BANDEJA_MAXIMA;
   }
@@ -151,7 +151,7 @@ export class Partida {
   }
 
   /**
-   * "Lámpara": completa un trío automáticamente. Prefiere el tipo que ya está
+   * "Completar": completa un trío automáticamente. Prefiere el tipo que ya está
    * en la bandeja y toma del tablero las fichas que falten (libres primero).
    */
   lampara(): { tipo: string; desdeTablero: number[]; desdeBandeja: number[] } | null {
@@ -210,7 +210,7 @@ export class Partida {
   }
 
   /**
-   * "Viento recio": baraja los tipos de las fichas del tablero, comprobando que
+   * "Mezclar": baraja los tipos de las fichas del tablero, comprobando que
    * el resultado siga teniendo solución. Devuelve false si no encontró una mezcla válida.
    */
   barajar(rng: Rng, intentos = 25): boolean {
