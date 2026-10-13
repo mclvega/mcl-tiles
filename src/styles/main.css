@@ -420,7 +420,7 @@ h1:focus {
   display: grid;
   place-items: center;
 }
-.tablero { position: relative; }
+.tablero { position: relative; isolation: isolate; }
 
 .ficha {
   --canto: 6px;
@@ -770,12 +770,13 @@ h1:focus {
   position: fixed;
   left: 50%;
   top: 38%;
-  z-index: 60;
+  z-index: 160;
   transform: translate(-50%, -50%);
   font-size: 2rem;
   font-weight: 700;
   color: #ffffff;
-  background: rgba(29, 78, 137, 0.92);
+  background: #1d4e89;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
   padding: 0.6rem 1.4rem;
   border-radius: 20px;
   pointer-events: none;
