@@ -1,6 +1,6 @@
 # Plan: juego de fichas de navegador con temática evangélica (RVR1960)
 
-Nombre de trabajo: **"Fichas de Fe"**. Alternativas: "Arca de Fichas" o "Tesoros del Reino".
+Nombre del proyecto: **McL Tiles**.
 
 ---
 
@@ -44,7 +44,7 @@ Nombre de trabajo: **"Fichas de Fe"**. Alternativas: "Arca de Fichas" o "Tesoros
 
 ## 2. Requisitos confirmados
 
-1. Es un juego de navegador publicado en **Netlify**, sin backend.
+1. Es un **juego de navegador** publicado en **Netlify**, sin backend. Se abre desde un enlace y no se instala. Se diseña primero para escritorio con mouse y también funciona en el navegador de tablet y celular.
 2. La temática es la iglesia evangélica y la Biblia **Reina-Valera 1960**.
 3. **Cada nivel recomienda un versículo.**
 4. **El juego es infinito.** No hay último nivel.
@@ -56,12 +56,12 @@ Nombre de trabajo: **"Fichas de Fe"**. Alternativas: "Arca de Fichas" o "Tesoros
 
 ## 3. Mecánica de juego
 
-- **Solo se juega con toques.** No hay arrastres, gestos de deslizar ni doble toque. Nunca hay temporizador ni presión de tiempo.
-- **Tablero:** fichas en una rejilla con medias posiciones (offset de 0,5), como en Mahjong. Hay **de 1 a 4 capas como máximo**. Las fichas bloqueadas se ven atenuadas y las libres tienen un borde claro, de modo que se distingue a simple vista qué se puede tocar.
-- **Fichas grandes:** miden como mínimo **64 px en móvil** y el tablero se escala para ocupar la pantalla.
+- **Se juega con un solo clic** (mouse en la computadora o toque en el navegador del celular). No hay arrastres, doble clic ni atajos obligatorios. Al pasar el mouse, la ficha libre se resalta. Nunca hay temporizador ni presión de tiempo.
+- **Tablero:** fichas en una rejilla con medias posiciones (offset de 0,5), como en Mahjong. Hay **de 1 a 4 capas como máximo**. Las fichas bloqueadas se ven atenuadas y las libres tienen un borde claro, de modo que se distingue a simple vista qué se puede elegir.
+- **Fichas grandes:** miden como mínimo **64 px** (unos 80–96 px en una pantalla de computadora) y el tablero se escala para ocupar la ventana del navegador.
 - **Ficha libre:** una ficha es libre si ninguna ficha de una capa superior se superpone con ella.
 - **Bandeja:** tiene 7 espacios. En los modos de dificultad "Muy fácil" y "Fácil" tiene 8 (ver §6d). Las fichas iguales se agrupan juntas y al formar 3 se eliminan con una animación lenta y vistosa.
-- **Ayuda automática:** si el jugador pasa 15 segundos sin tocar nada, se ilumina suavemente un trío posible. Se puede desactivar en Configuración.
+- **Ayuda automática:** si el jugador pasa 15 segundos sin elegir ninguna ficha, se ilumina suavemente un trío posible. Se puede desactivar en Configuración.
 - **Aviso preventivo:** cuando a la bandeja le quedan 2 espacios, aparece el mensaje "¡Cuidado, la bandeja casi está llena!" y los espacios libres se marcan en ámbar.
 - **Derrota amable:** la bandeja está llena y no hay trío. No aparece la palabra "Perdiste", sino "¡Casi lo logras, Ana!". Se ofrece primero una **segunda oportunidad gratis**: responder una pregunta bíblica fácil (§6b) devuelve 3 fichas al tablero. Si no, se puede "Intentar de nuevo".
 - **Victoria:** el tablero queda vacío. Se otorgan de 1 a 3 estrellas según las ayudas usadas, nunca por tiempo. Se muestra la pantalla con el versículo.
@@ -103,14 +103,14 @@ Los parámetros dependen de `n` y suben **lentamente** hasta un **techo bajo**. 
 | Margen libre de la bandeja | 4 | 3 | 2 o más |
 | Fichas especiales | — | — | solo "candado", y únicamente en "Desafío" |
 
-- **Tutorial guiado** en los niveles 1 a 3. Una mano animada indica qué tocar y un texto grande explica cada paso, por ejemplo "Toca una paloma… ¡Ahora otra!". También se puede escuchar en voz alta (§6c).
+- **Tutorial guiado** en los niveles 1 a 3. Un puntero animado indica qué ficha elegir y un texto grande explica cada paso, por ejemplo "Haz clic en una paloma… ¡Ahora en otra!". También se puede escuchar en voz alta (§6c).
 - **Ritmo en dientes de sierra suave:** cada 5 niveles hay uno "de descanso" muy fácil. Cada 10 hay un **"Nivel especial"** con premio doble, que es un poco más largo pero no más difícil.
 - **Ajuste automático (opcional):** si el jugador falla el mismo nivel 2 veces, se ofrece "¿Quieres que este nivel sea más fácil?", que regenera el nivel con menos tipos.
 - **Figuras del tablero:** se elige una plantilla por semilla. Opciones: cruz vacía, arca, paloma, pez (ichthys), tablas de la ley, corona, corazón, lámpara, templo, estrella, monte y pan.
 
 ### 4.4 Estructura sin fin: recorrido por los 66 libros
 - Cada **"capítulo" agrupa 20 niveles** y lleva el nombre de un libro: Génesis (1–20), Éxodo (21–40)… Apocalipsis (1301–1320).
-- Al terminar Apocalipsis empieza la **"Segunda vuelta"**, después la tercera, y así sucesivamente, con un pequeño aumento de dificultad base y fichas especiales nuevas.
+- Al terminar Apocalipsis empieza la **"Segunda vuelta"**, después la tercera, y así sucesivamente, con nuevas fichas temáticas y fondos. La dificultad no aumenta, porque se mantiene el techo amable de §4.3.
 - En el mapa de progreso se ve "Libro 12 · 2Reyes · Vuelta 1".
 
 ---
@@ -146,7 +146,7 @@ Con eso el juego es infinito pero el pool es finito: el pool se recicla barajado
 > **¡Bien hecho, Ana!** ⭐⭐⭐
 > *"Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas."*
 > — Josué 1:9 (RVR1960)
-> [Copiar] [Compartir] [Leer el capítulo ↗] [Siguiente nivel]
+> [🔊 Escuchar] [Copiar] [Compartir] [Leer el capítulo ↗] [▶ Siguiente nivel]
 
 - "Compartir" usa la Web Share API y, si no está disponible, copia al portapapeles.
 - "Leer el capítulo" abre el pasaje en un lector externo, como Bible Gateway con `version=RVR1960`.
@@ -186,43 +186,191 @@ Con eso el juego es infinito pero el pool es finito: el pool se recicla barajado
   - Pantalla de victoria: "¡Bien hecho, Ana!".
   - Al compartir: "Ana completó el nivel 37 de Fichas de Fe".
   - Bendición de bienvenida (Números 6:24): *"Jehová te bendiga, y te guarde"*.
-- **Privacidad:** el nombre se guarda **solo en el dispositivo** (`localStorage`) y se explica así en "Acerca de". Se puede cambiar desde Ajustes.
+- **Privacidad:** el nombre se guarda **solo en el dispositivo** (`localStorage`) y se explica así en "Acerca de". Se puede cambiar desde Configuración.
+
+---
+
+## 6b. Preguntas bíblicas y recompensas canjeables
+
+### Cuándo aparece una pregunta
+| Momento | Recompensa |
+|---|---|
+| **Cofre de bendiciones**, cada 3 niveles ganados | Si acierta, 30 talentos y un booster al azar |
+| **Pregunta del día**, en la pantalla de inicio, una vez al día | 50 talentos y la racha diaria |
+| **Segunda oportunidad**, al llenarse la bandeja | Se devuelven 3 fichas al tablero y sigue jugando |
+| **Botón "Gana talentos"**, en la tienda, cuando le faltan talentos | 10 talentos por acierto, hasta 5 veces al día |
+
+### Reglas pensadas para adultos mayores
+- **Las preguntas son fáciles**, de historias muy conocidas, con **3 opciones** en botones grandes y sin tiempo límite.
+- **Equivocarse nunca castiga.** Si la respuesta es incorrecta, se muestra con cariño la correcta y la cita ("La respuesta es **Noé**. Génesis 6:13-14"), y se da igualmente la mitad del premio.
+- La pregunta y las opciones **se pueden escuchar en voz alta** (§6c).
+- Una pregunta no se repite hasta agotar el banco, mediante una permutación determinista igual que con los versículos.
+
+### Banco de preguntas (`src/data/preguntas.json`)
+```json
+{ "id": 1, "pregunta": "¿Quién construyó el arca?",
+  "opciones": ["Noé", "Moisés", "Pedro"], "correcta": 0,
+  "ref": "Génesis 6:13-14", "dificultad": "facil" }
+```
+
+Las opciones se barajan al mostrarlas. Ejemplos iniciales (meta: unas 200 preguntas, cotejadas con la RVR1960):
+
+| Pregunta | Opciones (✔ correcta) | Cita |
+|---|---|---|
+| ¿Quién construyó el arca? | ✔ Noé · Moisés · Pedro | Génesis 6 |
+| ¿Quién venció al gigante Goliat? | ✔ David · Saúl · Sansón | 1 Samuel 17 |
+| ¿En qué ciudad nació Jesús? | ✔ Belén · Nazaret · Jericó | Mateo 2:1 |
+| ¿Quién fue tragado por un gran pez? | ✔ Jonás · Elías · Daniel | Jonás 1:17 |
+| ¿A quién echaron al foso de los leones? | ✔ Daniel · José · Pablo | Daniel 6 |
+| ¿Cuál es el primer libro de la Biblia? | ✔ Génesis · Éxodo · Mateo | — |
+| ¿Quién recibió las tablas de la ley en el monte Sinaí? | ✔ Moisés · Abraham · Josué | Éxodo 31:18 |
+| ¿Cuántos discípulos escogió Jesús? | ✔ Doce · Siete · Cuarenta | Mateo 10:1-4 |
+| Completa: "Jehová es mi ___; nada me faltará" | ✔ pastor · rey · amigo | Salmos 23:1 |
+| ¿Quién era la esposa de Abraham? | ✔ Sara · Rut · Ester | Génesis 17:15 |
+
+### Tienda "El Alfolí": canje de recompensas
+Los talentos ganados en niveles y preguntas se **canjean** por:
+
+| Categoría | Ejemplos | Precio orientativo |
+|---|---|---|
+| Ayudas | Lámpara, Viento recio, Volver al camino, Ensancha tu tienda | 20–60 talentos |
+| Fondos de tablero | Mar de Galilea, Monte de los Olivos, Templo, Campo de trigo, Atardecer | 150–300 |
+| Juegos de fichas | "Instrumentos de alabanza", "Animales del arca", "Frutos del Espíritu" | 300–500 |
+| Tarjetas de versículo | Marcos decorados para copiar o descargar como imagen y compartir | 100 |
+| Melodías | Himnos instrumentales adicionales (§6d) | 200 |
+
+**Sin dinero real:** todo se gana jugando o respondiendo preguntas.
+
+---
+
+## 6c. Accesibilidad y facilidad para adultos de 60+
+
+- **Texto grande:** el cuerpo mide como mínimo 20 px, los títulos 28 px o más, y la fuente es muy legible (Atkinson Hyperlegible o Nunito). En Configuración se puede elegir Normal, Grande o Muy grande.
+- **Botones grandes:** todos los botones miden como mínimo 56×56 px, están separados entre sí y combinan **ícono y texto**, sin depender de íconos solos.
+- **Alto contraste:** el contraste del texto es de al menos AAA (7:1). Cada ficha se distingue **por forma y por color**, algo que la app de referencia descuidó según sus reseñas. Hay un modo de alto contraste.
+- **Lectura en voz alta:** hay un botón 🔊 en los versículos, las preguntas y el tutorial. Usa la Web Speech API (`speechSynthesis`) con una voz `es-*` y velocidad 0,9.
+- **Sin presiones:** no hay temporizadores, cuentas regresivas, vidas ni esperas. Se puede pausar en cualquier momento y la partida se guarda sola.
+- **Navegación simple:** como mucho 2 clics para llegar a jugar. El botón principal "▶ Jugar" ocupa casi todo el ancho del inicio y siempre hay un "← Volver" visible.
+- **Interactividad que acompaña:** las fichas responden al clic con un rebote suave, cada trío suelta destellos, se oyen mensajes de ánimo ("¡Muy bien, Ana!") y la victoria se celebra con palomas y confeti.
+- **Confirmar acciones delicadas:** "Reiniciar progreso" pide confirmación con una explicación clara.
+- **Pantallas:** se diseña primero para el **navegador de escritorio** (computadora o notebook, de 1280×720 en adelante) y se adapta a tablet y celular, en vertical y horizontal.
+- **Mouse y teclado:** el cursor es grande (opcional) y hay resaltado al pasar el mouse. Se puede jugar con teclado (Tab, Enter y Esc para pausar) para quien tenga dificultad con el mouse. El zoom del navegador (Ctrl +) no rompe el diseño.
+- **Sin instalación:** se abre desde un enlace, sin registrarse ni descargar nada.
+
+---
+
+## 6d. Menú de Configuración
+
+Se abre con el ícono ⚙️ "Configuración", siempre visible en el inicio y en el menú de pausa. Los cambios se aplican al instante, se guardan en `localStorage` y hay un botón **"Restaurar valores recomendados"**.
+
+| Sección | Opción | Valores | Por defecto |
+|---|---|---|---|
+| **Jugador** | Nombre | texto (1–20 caracteres) | el ingresado al inicio |
+| **Dificultad** | Nivel de dificultad | Muy fácil · Fácil · Normal · Desafío | **Fácil** |
+| | Ayuda automática (pista tras 15 s) | Sí / No | Sí |
+| | Aviso de bandeja casi llena | Sí / No | Sí |
+| **Gráficos** | Calidad | Baja · Media · Alta · Automática | Automática |
+| | Cuadros por segundo (FPS) | 30 (ahorro de batería) · 60 · Máximo del dispositivo | 60 |
+| | Animaciones | Completas · Reducidas | según `prefers-reduced-motion` |
+| | Mostrar FPS en pantalla | Sí / No | No |
+| **Sonido** | Volumen general | 0–100 % | 70 % |
+| | Música | 0–100 % | 40 % |
+| | Efectos | 0–100 % | 70 % |
+| | Melodía | lista de himnos desbloqueados | "Sublime gracia" |
+| | Lectura en voz alta | Sí / No, más velocidad de voz | Sí, 0,9 |
+| **Pantalla** | Tamaño de texto | Normal · Grande · Muy grande | Grande |
+| | Alto contraste | Sí / No | No |
+| | Tema | Claro · Oscuro · Automático | Claro |
+| | Cursor grande | Sí / No | No |
+| | Pantalla completa | botón que activa la Fullscreen API | — |
+| **Datos** | Exportar / importar progreso | código para copiar y pegar en otro navegador | — |
+| | Reiniciar progreso | botón con confirmación | — |
+| | Acerca de y créditos | derechos RVR1960, música y licencias | — |
+
+**Qué cambia cada nivel de dificultad:**
+
+| | Muy fácil | Fácil | Normal | Desafío |
+|---|---|---|---|---|
+| Espacios de la bandeja | 8 | 8 | 7 | 7 |
+| Multiplicador de fichas y tipos | ×0,6 | ×0,8 | ×1 | ×1,2 |
+| Capas máximas | 2 | 3 | 4 | 5 |
+| Ayudas gratis por nivel | 3 | 2 | 1 | 0 |
+| Premio en talentos | ×1 | ×1 | ×1,2 | ×1,5 |
+
+**Qué cambia cada nivel de calidad gráfica:**
+- **Baja:** sin sombras ni partículas, transiciones simples y `devicePixelRatio` limitado a 1. Pensada para computadoras antiguas o navegadores lentos.
+- **Media:** sombras simples y pocas partículas.
+- **Alta:** sombras suaves, destellos, palomas animadas en la victoria y fondo con movimiento sutil.
+- **Automática:** mide los FPS reales durante los primeros segundos y baja la calidad si están por debajo de 45.
+
+**Implementación de FPS:** el tablero se dibuja con DOM y CSS. Las partículas y efectos van en un `<canvas>` superpuesto, con un bucle `requestAnimationFrame` que respeta el límite elegido (descarta cuadros según el intervalo objetivo). Un medidor opcional muestra los FPS en una esquina.
+
+### Música tranquila
+- **Estilo:** instrumental suave de **piano, arpa o cuerdas**, a 60–72 BPM, sin percusión ni cambios bruscos, en bucle sin cortes.
+- **Repertorio:** arreglos propios de **himnos de dominio público**, por ejemplo:
+  - "Sublime gracia" (*Amazing Grace*)
+  - "Santo, Santo, Santo"
+  - "Oh, qué amigo nos es Cristo"
+  - "Estoy bien con mi Dios" (*It Is Well with My Soul*)
+  - "Castillo fuerte es nuestro Dios"
+- **Evitar** himnos y coros con derechos vigentes, como "Grande es tu fidelidad" o "Cuán grande es Él". Las **grabaciones** también deben ser propias o tener licencia CC0 o CC-BY, aunque la melodía sea de dominio público.
+- **Técnica:**
+  - Archivos `.ogg` u `.mp3` de unos 1–2 MB cada uno, que se cargan solo cuando hacen falta.
+  - Fundido de entrada y salida de 2 segundos.
+  - La música arranca tras el primer clic, por la política de autoplay de los navegadores.
+  - Al ganar o al aparecer una pregunta, la música baja de volumen automáticamente (*ducking*).
+- **Efectos de sonido:** suaves y agradables. Un "toc" de madera al elegir una ficha, una campanita al completar un trío y un acorde de arpa en la victoria. No hay sonidos de error estridentes.
 
 ---
 
 ## 7. Arquitectura técnica
 
 **Stack:** **Vite + TypeScript**, sin framework.
-- El tablero se renderiza con DOM y CSS transforms, que alcanza de sobra para 150 fichas y facilita la accesibilidad y la nitidez en cualquier pantalla.
-- Las animaciones usan la Web Animations API.
-- El sonido usa la Web Audio API: un clic suave, el trío completado y la victoria. Se pueden agregar loops de alabanza instrumental con licencia libre.
-- Es una **PWA**: tiene manifest y service worker (`vite-plugin-pwa`), así que funciona sin conexión, igual que la app de referencia, y se puede instalar en el celular.
-- La partida se guarda en `localStorage` con un esquema versionado: nombre, nivel actual, estrellas, talentos, boosters, versículos recibidos, favoritos y ajustes.
+- **Tablero:** se dibuja con DOM y CSS transforms, porque son 75 fichas como máximo y así cada ficha es un `<button>` accesible y se ve nítida en cualquier pantalla.
+- **Efectos:** las partículas, el confeti y las palomas van en un `<canvas>` superpuesto, con un bucle `requestAnimationFrame` que respeta el límite de FPS y la calidad elegidos (§6d).
+- **Animaciones:** Web Animations API. Todas respetan "Animaciones reducidas".
+- **Audio:** Web Audio API con canales separados de música, efectos y voz, cada uno con su volumen, fundidos y *ducking*. La voz usa la Web Speech API (`speechSynthesis`, es-*).
+- **Juego web puro:** es un sitio estático (HTML, CSS y JS) que se abre desde un enlace en cualquier navegador moderno (Chrome, Edge, Firefox, Safari). No requiere instalación. Opcionalmente, un service worker (`vite-plugin-pwa`) guarda los archivos en caché para que cargue rápido en visitas siguientes y siga funcionando si se corta internet.
+- **Guardado:** `localStorage` con un esquema versionado y migraciones. Guarda el nombre, nivel actual, estrellas, talentos, boosters, compras de la tienda, versículos recibidos, favoritos, preguntas vistas, racha diaria y configuración.
 
 ```
 /
 ├─ index.html
 ├─ netlify.toml
-├─ public/            # íconos PWA, og-image, sonidos
+├─ public/            # favicon, og-image, fuentes
+│  └─ audio/          # himnos instrumentales (.ogg/.mp3) y efectos
 ├─ src/
 │  ├─ main.ts         # arranque y router de pantallas
 │  ├─ core/
 │  │  ├─ rng.ts            # mulberry32 + hash de semilla
 │  │  ├─ layouts.ts        # plantillas de figuras
 │  │  ├─ generator.ts      # geometría + orden de retirada + asignación de tipos
-│  │  ├─ difficulty.ts     # parámetros según n (curva con techo)
+│  │  ├─ difficulty.ts     # parámetros según n y modo de dificultad (curva suave con techo)
 │  │  ├─ solver.ts         # verificación de solución
-│  │  └─ game.ts           # estado: tablero, bandeja, tríos, victoria/derrota
+│  │  └─ game.ts           # estado: tablero, bandeja, tríos, victoria/derrota, segunda oportunidad
 │  ├─ content/
 │  │  ├─ tiles.ts          # catálogo de fichas (id, svg, tags)
 │  │  ├─ books.ts          # 66 libros → capítulos de 20 niveles
-│  │  └─ verses.ts         # selección de versículo por nivel
-│  ├─ data/versiculos.json
-│  ├─ ui/              # pantallas: bienvenida(nombre), inicio, mapa, juego, victoria, derrota, mis-versículos, ajustes, acerca
+│  │  ├─ verses.ts         # selección de versículo por nivel
+│  │  └─ quiz.ts           # selección de preguntas sin repetir
+│  ├─ data/
+│  │  ├─ versiculos.json
+│  │  └─ preguntas.json
+│  ├─ economy/
+│  │  ├─ wallet.ts         # talentos, recompensas, racha diaria
+│  │  └─ shop.ts           # catálogo del Alfolí y canjes
+│  ├─ settings/
+│  │  └─ settings.ts       # valores por defecto, persistencia, aplicación en vivo
+│  ├─ fx/
+│  │  ├─ loop.ts           # rAF con límite de FPS + medidor + calidad automática
+│  │  └─ particles.ts      # destellos, confeti, palomas
+│  ├─ ui/              # pantallas: bienvenida(nombre), inicio, mapa, juego, pausa, victoria,
+│  │                   #   casi-lo-logras, pregunta, cofre, alfolí, mis-versículos, configuración, acerca
 │  ├─ storage.ts
-│  ├─ audio.ts
-│  └─ styles/
-└─ tests/             # Vitest: generator siempre resoluble, determinismo, selección de versículos
+│  ├─ audio.ts        # música, efectos, ducking
+│  ├─ speech.ts       # lectura en voz alta
+│  └─ styles/         # tokens de tamaño de texto, contraste y tema
+└─ tests/             # Vitest: generador resoluble, determinismo, versículos, preguntas, economía, settings
 ```
 
 **Netlify** (`netlify.toml`):
@@ -235,6 +383,11 @@ Con eso el juego es infinito pero el pool es finito: el pool se recicla barajado
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/audio/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
 ```
 Se despliega conectando el repositorio de GitHub a Netlify (despliegue continuo) o con `netlify deploy --prod`.
 
@@ -245,26 +398,36 @@ Se despliega conectando el repositorio de GitHub a Netlify (despliegue continuo)
 | Fase | Entregable | Estimación |
 |---|---|---|
 | **0. Setup** | Vite + TS, ESLint y Vitest, primer despliegue "hola mundo" en Netlify | 0,5 día |
-| **1. Núcleo jugable** | Tablero con capas, fichas libres, bandeja de 7, tríos, victoria y derrota, con 1 nivel fijo | 2 días |
-| **2. Generador infinito** | Semilla, plantillas, orden de retirada, curva de dificultad, solver y tests de 10 000 niveles resolubles | 2–3 días |
-| **3. Contenido** | 24 SVG de fichas, 66 libros y capítulos, primer pool de ~150 versículos verificados | 3 días |
-| **4. Pantallas y flujo** | Bienvenida con nombre, inicio, mapa, victoria con versículo, Mis versículos, ajustes, Acerca y créditos | 2 días |
-| **5. Boosters y economía** | Talentos, 4 boosters, estrellas y niveles difíciles | 1–2 días |
-| **6. Pulido** | Animaciones, sonido, contraste y accesibilidad, PWA sin conexión, imagen para compartir | 2 días |
-| **7. Lanzamiento** | Revisión de derechos RVR1960, Lighthouse > 90, dominio y metadatos OG en Netlify | 0,5 día |
+| **1. Núcleo jugable** | Tablero con capas, fichas libres, bandeja, tríos, aviso de bandeja casi llena, victoria y "casi lo logras", con 1 nivel fijo | 2 días |
+| **2. Generador infinito** | Semilla, plantillas, orden de retirada, curva suave, 4 modos de dificultad, solver y tests de 10 000 niveles resolubles | 2–3 días |
+| **3. Contenido** | 24 SVG de fichas, 66 libros y capítulos, unos 150 versículos y 100 preguntas verificados | 3–4 días |
+| **4. Pantallas y flujo** | Bienvenida con nombre, inicio, mapa, tutorial guiado, victoria con versículo, Mis versículos, Acerca y créditos | 2–3 días |
+| **5. Configuración** | Menú completo de §6d: calidad, FPS, sonido, dificultad, texto, contraste y tema, aplicado en vivo | 1,5 días |
+| **6. Preguntas y recompensas** | Cofre cada 3 niveles, pregunta del día, segunda oportunidad, talentos, tienda "El Alfolí" y 4 boosters | 2–3 días |
+| **7. Audio y voz** | Música tranquila (3 himnos de dominio público arreglados), efectos suaves, ducking y lectura en voz alta | 1,5 días |
+| **8. Pulido y accesibilidad** | Partículas según calidad, animaciones, revisión AAA, prueba con 3 a 5 personas de 60+ y ajustes según lo observado, caché del navegador | 2–3 días |
+| **9. Lanzamiento** | Revisión de derechos de RVR1960 y música, Lighthouse > 90, dominio y metadatos OG en Netlify | 0,5 día |
 
-**MVP mínimo para probar** (fases 0–2 más una versión básica de la 4): unos 5 días.
+**MVP para probar con el público** (fases 0, 1, 2, una versión básica de la 4 y la 5 solo con dificultad y sonido): unos 6–7 días. **Conviene ponerlo pronto en manos de personas mayores reales.**
 
 ---
 
 ## 9. Criterios de aceptación
 
-- [ ] Todos los niveles del 1 al 10 000 se generan en menos de 50 ms y son resolubles (test automatizado).
-- [ ] El mismo número de nivel produce siempre el mismo tablero.
-- [ ] Cada victoria muestra un versículo RVR1960 con su referencia, y no se repite dentro de la misma vuelta del pool.
-- [ ] El primer inicio pide el nombre, el nombre aparece en el saludo y en la victoria, y se puede editar en Ajustes.
-- [ ] El juego funciona sin conexión después de la primera visita.
-- [ ] Se juega bien en un móvil de 360 px de ancho y en escritorio.
+- [ ] Todos los niveles del 1 al 10 000 se generan en menos de 50 ms y son resolubles, en los 4 modos de dificultad (test automatizado).
+- [ ] El mismo número de nivel y la misma dificultad producen siempre el mismo tablero.
+- [ ] Cada victoria muestra un versículo RVR1960 con su referencia y el botón 🔊. No se repite dentro de la misma vuelta del pool.
+- [ ] El primer inicio pide el nombre. El nombre aparece en el saludo, la victoria y "casi lo logras", y se puede editar en Configuración.
+- [ ] El cofre aparece cada 3 niveles y la pregunta del día una vez al día. Equivocarse da la mitad del premio y muestra la respuesta con su cita.
+- [ ] Los talentos se pueden canjear en el Alfolí y lo comprado se mantiene al recargar la página.
+- [ ] Cada opción de Configuración (calidad, FPS, volúmenes, dificultad, texto, contraste, tema y cursor grande) se aplica al instante y se mantiene al recargar.
+- [ ] El límite de 30 FPS se cumple, comprobado con el medidor en pantalla.
+- [ ] La música es tranquila, arranca tras el primer clic y baja de volumen en preguntas y victorias.
+- [ ] No hay ningún temporizador. Todos los botones y fichas miden 56 px o más y el texto 20 px o más.
+- [ ] Una persona de 60+ sin experiencia completa el tutorial y 3 niveles sin ayuda externa.
+- [ ] Después de la primera visita, el juego carga rápido desde la caché del navegador.
+- [ ] Se juega bien con mouse en Chrome, Edge, Firefox y Safari de escritorio, y también en el navegador de tablet y celular (desde 360 px de ancho).
+- [ ] Se puede jugar completo solo con teclado.
 - [ ] El crédito de copyright de la RVR1960 se ve en Acerca y en la pantalla de versículos.
 
 ## 10. Riesgos
@@ -272,6 +435,11 @@ Se despliega conectando el repositorio de GitHub a Netlify (despliegue continuo)
 | Riesgo | Mitigación |
 |---|---|
 | Derechos de la RVR1960 | Limitar el pool, incluir el aviso y confirmar la política de SBU antes de publicar |
-| Errores de transcripción en versículos | Cotejar cada versículo contra una fuente oficial y agregar un test que valide el formato de las referencias |
+| Derechos de la música | Usar solo himnos de dominio público, con arreglo y grabación propios o CC0/CC-BY, y registrar las licencias en Acerca |
+| Errores de transcripción en versículos y preguntas | Cotejar todo contra la RVR1960 y agregar un test que valide el formato de las referencias y que cada pregunta tenga una sola correcta |
 | Fichas poco distinguibles (la queja de las reseñas) | Diferenciar por forma y por color, probar con simulador de daltonismo y ofrecer un modo de alto contraste |
-| Monotonía en niveles altos | Plantillas variadas, fichas especiales por vuelta y ritmo en dientes de sierra |
+| Frustración del público mayor | Curva suave, bandeja de 8, segunda oportunidad con pregunta, ayuda automática, ajuste automático tras 2 fallos y pruebas con usuarios reales |
+| Computadoras o navegadores lentos | Calidad automática, límite de 30 FPS, DOM liviano y efectos solo en canvas desactivable |
+| El progreso vive en el navegador | Si se borran los datos del navegador o se cambia de equipo, se pierde. Se agrega en Configuración "Exportar/Importar progreso" (un código para copiar) |
+| Voz de lectura no disponible en el dispositivo | Detectar si hay voz `es-*` y, si no la hay, ocultar el botón 🔊 sin romper nada |
+| Monotonía en niveles altos | Plantillas variadas, fichas y fondos nuevos por vuelta, cofres y premios |

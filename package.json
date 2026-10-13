@@ -1,0 +1,22 @@
+{
+  "name": "mcl-tiles",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Juego de fichas de navegador con temática bíblica (RVR1960), pensado para adultos mayores.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  },
+  "dependencies": {
+    "@fontsource/atkinson-hyperlegible": "^5.3.0"
+  }
+}
