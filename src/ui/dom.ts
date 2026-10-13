@@ -78,6 +78,8 @@ export function abrirModal(opciones: {
   contenido: Node;
   cerrable?: boolean;
   clase?: string;
+  /** Texto para lectores de pantalla (no se muestra). */
+  descripcion?: string;
   alCerrar?: () => void;
 }): Modal {
   const idTitulo = `modal-titulo-${++contadorTitulos}`;
@@ -86,6 +88,7 @@ export function abrirModal(opciones: {
     'div',
     { class: `modal ${opciones.clase ?? ''}`, role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': idTitulo },
     h('h2', { class: 'modal-titulo', id: idTitulo, text: opciones.titulo }),
+    opciones.descripcion ? h('p', { class: 'oculto-visual', text: opciones.descripcion }) : null,
     opciones.contenido,
   );
   const fondo = h('div', { class: 'modal-fondo' }, caja);

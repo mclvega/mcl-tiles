@@ -1287,3 +1287,22 @@ h1:focus {
   .cabecera .chip-palabra { display: none; }
   .inicio-simple .cabecera { flex-wrap: nowrap; }
 }
+
+/* ---------- Pregunta: ventana pequeña y simple ---------- */
+.modal-pregunta { max-width: 460px; padding: 1rem 1.1rem 1.1rem; }
+.modal-pregunta .modal-titulo { font-size: 1.1rem; padding-right: 0; text-align: center; margin-bottom: 0.4rem; }
+.pregunta-cuerpo { gap: 0.6rem; }
+.modal-pregunta .pregunta-texto { font-size: 1.15rem; margin: 0; text-align: center; }
+.modal-pregunta .opciones-pregunta { gap: 0.5rem; }
+.modal-pregunta .opcion { min-height: 54px; font-size: 1.05rem; justify-content: center; text-align: center; }
+.modal-pregunta .respuesta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0.55rem 0.8rem;
+  font-size: 1rem;
+}
+.modal-pregunta .respuesta-premio { white-space: nowrap; }
+.modal-pregunta .zona-resultado, .modal-pregunta .pila { gap: 0.5rem; }
