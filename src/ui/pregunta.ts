@@ -2,7 +2,7 @@ import { app } from '../app';
 import { audio } from '../audio';
 import { opcionesBarajadas, preguntaNumero } from '../content/quiz';
 import { voz } from '../speech';
-import { abrirModal, boton, h } from './dom';
+import { abrirModal, agregar, boton, h } from './dom';
 
 export interface OpcionesPregunta {
   titulo: string;
@@ -11,6 +11,8 @@ export interface OpcionesPregunta {
   /** Texto del premio según la respuesta (se muestra después de responder). */
   resultado: (correcta: boolean) => string;
   textoContinuar?: string;
+  /** Si se indica, tras mostrar el resultado se cierra sola pasados estos milisegundos. */
+  autoCerrarMs?: number;
 }
 
 /**
@@ -49,12 +51,14 @@ export function abrirPregunta(opciones: OpcionesPregunta): Promise<boolean> {
         const mensaje = op.correcta
           ? `¡Correcto, ${app.nombre()}! 🎉`
           : `La respuesta es «${correcta}»${cita}. ¡Ahora ya lo sabes!`;
-        zonaResultado.append(
+        agregar(zonaResultado, [
           h('p', { class: `respuesta ${op.correcta ? 'bien' : 'mal'}`, text: mensaje }),
           h('p', { class: 'premio', text: opciones.resultado(op.correcta) }),
           boton(opciones.textoContinuar ?? 'Continuar', () => modal.cerrar(), { variante: 'primario', clase: 'btn-grande' }),
-        );
+          opciones.autoCerrarMs ? h('div', { class: 'cuenta-atras', 'aria-hidden': 'true', style: { animationDuration: `${opciones.autoCerrarMs}ms` } }) : null,
+        ]);
         if (app.vozActiva()) voz.hablar(mensaje);
+        if (opciones.autoCerrarMs) setTimeout(() => modal.cerrar(), opciones.autoCerrarMs);
         zonaResultado.querySelector<HTMLButtonElement>('.btn-primario')?.focus();
       }, { icono: `${i + 1}.`, clase: 'opcion' }),
     );

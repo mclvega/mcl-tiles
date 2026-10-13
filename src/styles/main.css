@@ -904,22 +904,14 @@ h1:focus {
 
 /* ---------- Recompensas (nivel completado) ---------- */
 .premio-monedas {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  margin: 0 auto;
-  padding: 0.35rem 1.1rem;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #fff3c4, #ffd95e);
-  border: 3px solid #d9a400;
-  color: #5c3d00;
-  font-size: 1.2rem;
-  box-shadow: 0 4px 0 #b8860b, 0 8px 16px rgba(120, 80, 0, 0.25);
-  animation: aparecer 0.4s ease;
+  /* Texto informativo, no un botón: sin borde, fondo ni sombra. */
+  margin: 0;
+  text-align: center;
+  color: var(--accent);
+  font-size: 1.05rem;
+  font-weight: 700;
 }
-.premio-monedas .moneda { font-size: 1.5rem; }
-.premio-monedas strong { font-size: 1.5rem; }
+.premio-monedas .moneda { margin-right: 0.25rem; }
 .premio-monedas .doble {
   margin-left: 0.3rem;
   padding: 0 0.45rem;
@@ -1067,4 +1059,17 @@ h1:focus {
 }
 @media (max-width: 600px) {
   .ayuda .cuenta.precio { right: calc(50% - 46px); }
+}
+
+/* Barra que se vacía mientras el resultado se cierra solo. */
+.cuenta-atras {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--primary);
+  transform-origin: left;
+  animation: cuenta-atras linear forwards;
+}
+@keyframes cuenta-atras {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
 }

@@ -601,47 +601,20 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       h('span', { text: ' monedas' }),
       p.tipoNivel === 'especial' ? h('span', { class: 'doble', text: '×2' }) : null,
     );
-    let ganado = premio;
-    const tituloBonus = h('span', { class: 'recompensa-titulo', text: 'Pregunta bonus' });
-    const detalleBonus = h('span', { class: 'recompensa-detalle', text: 'Responde una pregunta fácil' });
-    const montoBonus = h('span', { class: 'recompensa-monto', text: `+${PREMIOS.bonus.acierto} 🪙` });
-    const bonus = h(
-      'button',
-      { type: 'button', class: 'recompensa', 'aria-label': `Pregunta bonus: gana ${PREMIOS.bonus.acierto} monedas más` },
-      h('span', { class: 'recompensa-icono', 'aria-hidden': 'true', text: '🎁' }),
-      h('span', { class: 'recompensa-textos' }, tituloBonus, detalleBonus),
-      montoBonus,
-    );
-    bonus.addEventListener('click', async () => {
-      if (bonus.disabled) return;
-      bonus.disabled = true;
-      const acerto = await abrirPregunta({
-        titulo: '⭐ Pregunta bonus',
-        premio: `Responde y gana ${PREMIOS.bonus.acierto} monedas extra.`,
-        resultado: (ok) => `+${ok ? PREMIOS.bonus.acierto : PREMIOS.bonus.error} monedas 🪙`,
-        textoContinuar: 'Volver',
-      });
-      const extra = acerto ? PREMIOS.bonus.acierto : PREMIOS.bonus.error;
-      sumarTalentos(app.g, extra);
-      app.guardar();
-      talentos.refrescar();
-      ganado += extra;
-      cifraPremio.textContent = `+${ganado}`;
-      bonus.classList.add('hecha');
-      tituloBonus.textContent = acerto ? '¡Bonus ganado!' : 'Bonus respondido';
-      detalleBonus.textContent = acerto ? '¡Muy bien!' : 'Igual ganaste monedas';
-      montoBonus.textContent = `+${extra} ✔`;
-      siguiente.focus();
-    });
-
+    let saliendo = false;
     const salir = async (destino: 'siguiente' | 'inicio') => {
+      if (saliendo) return;
+      saliendo = true;
+      window.clearTimeout(quizAutomatico);
       modal.cerrar();
       if (quiz) {
+        // Quiz automático (sin preguntar): pregunta fácil, muestra el resultado y sigue solo.
         const acerto = await abrirPregunta({
           titulo: '🧠 Quiz bíblico',
-          premio: `¡Hora del quiz, ${app.nombre()}! Responde y gana hasta ${PREMIOS.quiz.acierto} monedas.`,
+          premio: `¡Pregunta fácil, ${app.nombre()}! Gana hasta ${PREMIOS.quiz.acierto} monedas.`,
           resultado: (ok) => `+${ok ? PREMIOS.quiz.acierto : PREMIOS.quiz.error} monedas 🪙`,
           textoContinuar: destino === 'siguiente' ? 'Seguir al próximo nivel' : 'Volver al inicio',
+          autoCerrarMs: 3500,
         });
         sumarTalentos(app.g, acerto ? PREMIOS.quiz.acierto : PREMIOS.quiz.error);
         app.guardar();
@@ -662,22 +635,10 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       h('p', { class: 'texto-grande centrado', text: `¡Bien hecho, ${app.nombre()}!` }),
       textoPremio,
       finLibro ? h('p', { class: 'respuesta bien centrado', text: finLibro }) : null,
-      quiz
-        ? h(
-            'div',
-            { class: 'recompensa quiz', role: 'note' },
-            h('span', { class: 'recompensa-icono', 'aria-hidden': 'true', text: '🧠' }),
-            h(
-              'span',
-              { class: 'recompensa-textos' },
-              h('span', { class: 'recompensa-titulo', text: '¡Toca quiz bíblico!' }),
-              h('span', { class: 'recompensa-detalle', text: 'Aparece al continuar' }),
-            ),
-            h('span', { class: 'recompensa-monto', text: `+${PREMIOS.quiz.acierto} 🪙` }),
-          )
-        : bonus,
       h('div', { class: 'fila-botones' }, siguiente, boton('Inicio', () => void salir('inicio'), { icono: '🏠' })),
     );
+    // En los niveles con quiz, la pregunta aparece sola tras un momento.
+    const quizAutomatico = quiz ? window.setTimeout(() => void salir('siguiente'), 2200) : undefined;
     const modal = abrirModal({
       titulo: `¡Nivel ${n} completado!`,
       contenido,

@@ -4,8 +4,6 @@ import { AYUDAS, ARTICULOS_POR_ID, type IdAyuda } from './shop';
 
 /** Premios en talentos (Mateo 25: la parábola de los talentos). */
 export const PREMIOS = {
-  /** Pregunta bonus opcional al completar un nivel. */
-  bonus: { acierto: 10, error: 3 },
   /** Quiz bíblico automático cada 2 o 3 niveles. */
   quiz: { acierto: 20, error: 5 },
   preguntaDia: { acierto: 50, error: 25 },
