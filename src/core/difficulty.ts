@@ -29,8 +29,9 @@ export type TipoNivel = 'tutorial' | 'reto' | 'normal';
  * - torre: más capas, pero menos tipos de ficha.
  * - bolitas: minijuego de combinar 3 bolitas de colores (estilo «candy»).
  * - animalitos: todas las fichas son de un mismo animal (perritos, gatitos…).
+ * - burbujas: minijuego «disparador de burbujas» (apuntar, disparar y juntar 3).
  */
-export type Modalidad = 'clasico' | 'dorado' | 'sorpresa' | 'torre' | 'bolitas' | 'animalitos';
+export type Modalidad = 'clasico' | 'dorado' | 'sorpresa' | 'torre' | 'bolitas' | 'animalitos' | 'burbujas';
 
 export const MODALIDADES: Record<Modalidad, { nombre: string; icono: string }> = {
   clasico: { nombre: 'Clásico', icono: '🧩' },
@@ -39,10 +40,11 @@ export const MODALIDADES: Record<Modalidad, { nombre: string; icono: string }> =
   torre: { nombre: 'Nivel torre', icono: '🗼' },
   bolitas: { nombre: 'Bolitas de colores', icono: '🔴' },
   animalitos: { nombre: 'Animalitos', icono: '🐾' },
+  burbujas: { nombre: 'Disparador de burbujas', icono: '🫧' },
 };
 
 /** Orden en que se van turnando los tipos de juego (un bloque de 3 niveles cada uno). */
-const ROTACION: Modalidad[] = ['dorado', 'animalitos', 'bolitas', 'sorpresa', 'torre', 'clasico'];
+const ROTACION: Modalidad[] = ['dorado', 'animalitos', 'bolitas', 'sorpresa', 'burbujas', 'torre', 'clasico'];
 export const NIVELES_POR_BLOQUE = 3;
 
 /**

@@ -105,7 +105,7 @@ describe('tipos de juego', () => {
       expect(modalidadDe(bloque + 3)).not.toBe(modalidadDe(bloque));
     }
     const todos = new Set(Array.from({ length: 60 }, (_, i) => modalidadDe(i + 4)));
-    expect([...todos].sort()).toEqual(['animalitos', 'bolitas', 'clasico', 'dorado', 'sorpresa', 'torre']);
+    expect([...todos].sort()).toEqual(['animalitos', 'bolitas', 'burbujas', 'clasico', 'dorado', 'sorpresa', 'torre']);
     expect(Array.from({ length: 200 }, (_, i) => modalidadDe(i + 1, 'muyFacil'))).not.toContain('sorpresa');
   });
 });

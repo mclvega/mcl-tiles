@@ -10,7 +10,7 @@ Juego de fichas para el navegador. Se juntan tres fichas iguales y, al completar
 - **Tienda "El Alfolí":** las monedas ganadas se canjean por ayudas, fondos, estilos de ficha, melodías y tarjetas de versículo. No se usa dinero real.
 - **Pide el nombre del jugador** y lo usa en los saludos. Solo se guarda en el navegador.
 - **Con o sin Biblia:** al empezar se pregunta si se incluye el contenido bíblico (también en Configuración). Con «No» se ocultan versículos, Biblia y fichas bíblicas, y las preguntas pasan a ser de animalitos.
-- **Tipos de nivel variados:** clásico, dorado (fichas que dan monedas extra), sorpresa (fichas boca abajo), torre, niveles de un solo animal (perritos, gatitos, vaquitas, caballitos, conejitos, pollitos) y el minijuego «Bolitas de colores» (combinar 3, con movimientos).
+- **Tipos de nivel variados:** clásico, dorado (fichas que dan monedas extra), sorpresa (fichas boca abajo), torre, niveles de un solo animal (perritos, gatitos, vaquitas, caballitos, conejitos, pollitos) , el minijuego «Bolitas de colores» (combinar 3 deslizando, con movimientos) y el «Disparador de burbujas» (apuntar, disparar y juntar 3). El tipo de juego cambia cada 3 niveles.
 - **Menú de Configuración:**
   - Dificultad (Muy fácil, Fácil, Normal y Desafío).
   - Gráficos: calidad y límite de FPS.

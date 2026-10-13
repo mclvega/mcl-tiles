@@ -23,6 +23,7 @@ import { abrirModal, avisar, boton, confirmar, esperar, h, hayModalAbierto, type
 import { abrirPregunta } from './pregunta';
 import { celebrarNivel } from './finNivel';
 import { pantallaBolitas } from './bolitas';
+import { pantallaBurbujas } from './burbujas';
 
 const ANIMOS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Gloria a Dios!', '¡Sigue así, {n}!', '¡Qué bendición!'];
 const ANIMOS_NEUTROS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Genial!', '¡Sigue así, {n}!', '¡Qué bien!'];
@@ -39,6 +40,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const masFacil = g.masFacil.includes(n);
   const p = paramsNivel(n, g.config.dificultad, masFacil);
   if (p.modalidad === 'bolitas') return pantallaBolitas(n, p);
+  if (p.modalidad === 'burbujas') return pantallaBurbujas(n, p);
   const tema = p.modalidad === 'animalitos' ? temaDeNivel(n) : null;
   const pool = tema ? poolDeTema(tema) : poolDeVuelta(ub.vuelta).filter((t) => app.biblico() || !FICHAS_BIBLICAS.has(t));
   const versiculo = versiculoDeNivel(n);

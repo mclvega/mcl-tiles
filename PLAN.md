@@ -443,3 +443,45 @@ Se despliega conectando el repositorio de GitHub a Netlify (despliegue continuo)
 | El progreso vive en el navegador | Si se borran los datos del navegador o se cambia de equipo, se pierde. Se agrega en Configuración "Exportar/Importar progreso" (un código para copiar) |
 | Voz de lectura no disponible en el dispositivo | Detectar si hay voz `es-*` y, si no la hay, ocultar el botón 🔊 sin romper nada |
 | Monotonía en niveles altos | Plantillas variadas, fichas y fondos nuevos por vuelta, cofres y premios |
+
+---
+
+## 11. Nuevo tipo de juego: «Disparador de burbujas»
+
+**Objetivo:** un tipo de nivel fácil y tranquilo, en el que se apunta y se dispara una burbuja de color. Al juntar 3 o más del mismo color, explotan.
+
+### Reglas (pensadas para adultos de 60+)
+- **Tablero:**
+  - Burbujas en filas encajadas tipo panal, de 9 por fila, con 4 colores (los mismos de «Bolitas»).
+  - Cada color lleva su símbolo (♥ ◆ ♣ ★), para quien distingue mal los colores.
+  - Al empezar hay 5 filas llenas.
+- **Apuntar:**
+  - Se mantiene el dedo o el mouse sobre el tablero y aparece una **línea de puntería punteada larga**, que muestra también el rebote en la pared.
+  - Al soltar, se dispara. Un toque simple dispara hacia ese punto.
+- **Lanzador:**
+  - Abajo, al centro, con la burbuja actual y la siguiente. Al tocar la actual se intercambian.
+  - Solo salen colores que todavía están en el tablero.
+- **Explosión:**
+  - 3 o más del mismo color conectadas explotan.
+  - Las que quedan colgando, sin conexión con el techo, caen y dan monedas extra.
+- **Ganar:** dejar el tablero vacío.
+- **Perder:** quedarse sin disparos (son generosos, unos 30) o que las burbujas lleguen a la línea de abajo.
+  - Se ofrece **+5 disparos** respondiendo una pregunta, o intentar de nuevo.
+- **Ayudas:**
+  - Pista automática tras 10 segundos sin jugar: se marca un buen lugar para apuntar.
+  - Sin tiempo límite.
+- **Estrellas:** según los disparos que sobran, igual que en «Bolitas».
+
+### Diseño técnico
+| Pieza | Archivo | Contenido |
+|---|---|---|
+| Lógica pura | `src/core/burbujas.ts` | Rejilla en panal (filas con desplazamiento), vecinos, simulación de la trayectoria con rebotes, encaje en la celda libre más cercana, grupo del mismo color, burbujas colgantes, colores restantes |
+| Pantalla | `src/ui/burbujas.ts` | Dibujo en `<canvas>` (nítido según la densidad de la pantalla), apuntar con puntero o toque, animación del disparo, explosión y caída, objetivos y disparos restantes, pausa, ganar o perder |
+| Rotación | `src/core/difficulty.ts` | Nueva modalidad `burbujas` dentro del turno de tipos (bloques de 3 niveles) |
+| Pruebas | `tests/burbujas.test.ts` | Vecinos, encaje, explosión de grupos, caída de colgantes, trayectoria con rebote y que un nivel siempre pueda vaciarse |
+
+### Pasos
+1. Lógica pura con pruebas.
+2. Pantalla en canvas, primero con apuntar y disparar.
+3. Explosiones, caída, ganar y perder, y la pantalla compartida de nivel completado.
+4. Agregarla a la rotación de tipos y comprobarla en Chrome, en computadora y en celular.

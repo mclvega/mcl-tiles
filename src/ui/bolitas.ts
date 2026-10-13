@@ -19,7 +19,7 @@ import { celebrarNivel } from './finNivel';
 import { abrirPregunta } from './pregunta';
 
 /** Colores de las bolitas. Cada una lleva además un símbolo, para quien distingue mal los colores. */
-const COLORES = [
+export const COLORES = [
   { nombre: 'roja', fondo: '#e53935', oscuro: '#a31515', simbolo: '♥', tinta: '#ffffff' },
   { nombre: 'azul', fondo: '#1e88e5', oscuro: '#0d4f99', simbolo: '◆', tinta: '#ffffff' },
   { nombre: 'verde', fondo: '#43a047', oscuro: '#1f6b24', simbolo: '♣', tinta: '#ffffff' },
