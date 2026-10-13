@@ -102,8 +102,22 @@ export function tarjetaVersiculo(
 }
 
 /** Mensaje grande de ánimo en el centro de la pantalla. */
+let animoActual: HTMLElement | null = null;
+
+/**
+ * Mensaje breve de ánimo. Hay uno solo a la vez: si llega otro, reemplaza
+ * al anterior (antes se encimaban y la animación parecía trabarse).
+ */
 export function mostrarAnimo(texto: string): void {
+  animoActual?.remove();
   const el = h('div', { class: 'animo', 'aria-hidden': 'true', text: texto });
+  animoActual = el;
   document.body.append(el);
-  setTimeout(() => el.remove(), 1500);
+  const quitar = () => {
+    el.remove();
+    if (animoActual === el) animoActual = null;
+  };
+  el.addEventListener('animationend', quitar, { once: true });
+  // Respaldo por si la animación no corre (pestaña en segundo plano, animaciones reducidas).
+  setTimeout(quitar, 1600);
 }
