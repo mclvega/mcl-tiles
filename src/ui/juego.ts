@@ -25,7 +25,7 @@ import { abrirPregunta } from './pregunta';
 
 const ANIMOS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Gloria a Dios!', '¡Sigue así, {n}!', '¡Qué bendición!'];
 const ESPERA_PISTA_MS = 15000;
-const DESPLAZAMIENTO_CAPA = 0.08;
+const DESPLAZAMIENTO_CAPA = 0.16;
 
 export function pantallaJuego(params: Record<string, unknown>): Pantalla {
   const g = app.g;
@@ -114,6 +114,8 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       b.style.width = `${tw}px`;
       b.style.height = `${th}px`;
       b.style.zIndex = String(f.z * 1000 + f.y * 10 + f.x);
+      // Cuanto más abajo está la ficha, más oscura se ve al estar tapada.
+      b.style.setProperty('--profundidad', String(capas - 1 - f.z));
       b.style.setProperty('--canto', `${Math.max(3, tw * 0.07)}px`);
     }
     const anchoDisponible = Math.min(window.innerWidth - 32, 980);

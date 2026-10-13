@@ -437,7 +437,13 @@ h1:focus {
 .ficha.libre { border-color: var(--ficha-libre); }
 .ficha.libre:hover { transform: translateY(-5px); }
 .ficha.bloqueada {
-  filter: brightness(0.6) saturate(0.55);
+  /* Tapada: más oscura según la capa, con contorno marcado para que se note que está ahí. */
+  filter: brightness(calc(0.72 - var(--profundidad, 0) * 0.06)) saturate(0.6);
+  border-color: #5a4630;
+  box-shadow:
+    0 var(--canto) 0 #8c7650,
+    0 0 0 2px rgba(40, 25, 5, 0.55),
+    0 calc(var(--canto) + 4px) 10px rgba(40, 25, 5, 0.4);
   cursor: not-allowed;
 }
 .ficha.pista {
