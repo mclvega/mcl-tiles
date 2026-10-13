@@ -591,9 +591,28 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     }
 
     const quiz = nuevo && tocaQuiz(n);
-    const textoPremio = h('p', { class: 'premio', text: `+${premio} monedas 🪙${p.tipoNivel === 'especial' ? ' (premio doble)' : ''}` });
+    const cifraPremio = h('strong', { text: `+${premio}` });
+    const textoPremio = h(
+      'p',
+      { class: 'premio-monedas', 'aria-live': 'polite' },
+      h('span', { class: 'moneda', 'aria-hidden': 'true', text: '🪙' }),
+      cifraPremio,
+      h('span', { text: ' monedas' }),
+      p.tipoNivel === 'especial' ? h('span', { class: 'doble', text: '×2' }) : null,
+    );
     let ganado = premio;
-    const bonus = boton(`Pregunta bonus: gana ${PREMIOS.bonus.acierto} monedas más`, async () => {
+    const tituloBonus = h('span', { class: 'recompensa-titulo', text: 'Pregunta bonus' });
+    const detalleBonus = h('span', { class: 'recompensa-detalle', text: 'Responde una pregunta fácil' });
+    const montoBonus = h('span', { class: 'recompensa-monto', text: `+${PREMIOS.bonus.acierto} 🪙` });
+    const bonus = h(
+      'button',
+      { type: 'button', class: 'recompensa', 'aria-label': `Pregunta bonus: gana ${PREMIOS.bonus.acierto} monedas más` },
+      h('span', { class: 'recompensa-icono', 'aria-hidden': 'true', text: '🎁' }),
+      h('span', { class: 'recompensa-textos' }, tituloBonus, detalleBonus),
+      montoBonus,
+    );
+    bonus.addEventListener('click', async () => {
+      if (bonus.disabled) return;
       bonus.disabled = true;
       const acerto = await abrirPregunta({
         titulo: '⭐ Pregunta bonus',
@@ -606,10 +625,13 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       app.guardar();
       talentos.refrescar();
       ganado += extra;
-      textoPremio.textContent = `+${ganado} monedas 🪙`;
-      bonus.querySelector('.btn-texto')!.textContent = acerto ? '¡Bonus ganado! ✔' : 'Bonus respondido ✔';
+      cifraPremio.textContent = `+${ganado}`;
+      bonus.classList.add('hecha');
+      tituloBonus.textContent = acerto ? '¡Bonus ganado!' : 'Bonus respondido';
+      detalleBonus.textContent = acerto ? '¡Muy bien!' : 'Igual ganaste monedas';
+      montoBonus.textContent = `+${extra} ✔`;
       siguiente.focus();
-    }, { icono: '❓', variante: 'suave', clase: 'btn-ancho' });
+    });
 
     const salir = async (destino: 'siguiente' | 'inicio') => {
       modal.cerrar();
@@ -639,7 +661,20 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       h('p', { class: 'texto-grande centrado', text: `¡Bien hecho, ${app.nombre()}!` }),
       textoPremio,
       finLibro ? h('p', { class: 'respuesta bien centrado', text: finLibro }) : null,
-      quiz ? h('p', { class: 'centrado', text: '🧠 Al continuar te espera un quiz bíblico.' }) : bonus,
+      quiz
+        ? h(
+            'div',
+            { class: 'recompensa quiz', role: 'note' },
+            h('span', { class: 'recompensa-icono', 'aria-hidden': 'true', text: '🧠' }),
+            h(
+              'span',
+              { class: 'recompensa-textos' },
+              h('span', { class: 'recompensa-titulo', text: '¡Toca quiz bíblico!' }),
+              h('span', { class: 'recompensa-detalle', text: 'Aparece al continuar' }),
+            ),
+            h('span', { class: 'recompensa-monto', text: `+${PREMIOS.quiz.acierto} 🪙` }),
+          )
+        : bonus,
       h('div', { class: 'fila-botones' }, siguiente, boton('Inicio', () => void salir('inicio'), { icono: '🏠' })),
     );
     const modal = abrirModal({
