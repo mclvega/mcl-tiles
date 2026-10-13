@@ -25,8 +25,6 @@ import { celebrarNivel } from './finNivel';
 import { pantallaBolitas } from './bolitas';
 import { pantallaBurbujas } from './burbujas';
 
-const ANIMOS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Gloria a Dios!', '¡Sigue así, {n}!', '¡Qué bendición!'];
-const ANIMOS_NEUTROS = ['¡Muy bien, {n}!', '¡Excelente!', '¡Así se hace!', '¡Genial!', '¡Sigue así, {n}!', '¡Qué bien!'];
 /** Fichas con símbolos bíblicos: no se usan si el contenido bíblico está apagado. */
 const FICHAS_BIBLICAS = new Set(['cruz', 'biblia', 'zarza', 'arca']);
 const ESPERA_PISTA_MS = 15000;
@@ -253,7 +251,6 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     app.guardar();
     talentos.refrescar();
     audio.efecto('canje');
-    mostrarAnimo(`✨ +${PREMIO_DORADO} monedas`);
   }
 
   async function animarSalida(ids: number[]): Promise<void> {
@@ -382,7 +379,6 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       await animarSalida(r.trio);
       triosHechos++;
       if (dorados.has(partida.tipo(id))) premioDorado();
-      if (triosHechos === 1 || triosHechos % 2 === 0) mostrarAnimo((app.biblico() ? ANIMOS : ANIMOS_NEUTROS)[triosHechos % ANIMOS.length].replace('{n}', app.nombre()));
       pintarBandeja(partida.bandeja);
     }
     refrescarAyudas();
@@ -564,7 +560,6 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
         await animarSalida(r.desdeBandeja);
         if (!r.desdeBandeja.length) audio.efecto('trio');
         pintarBandeja(partida.bandeja);
-        mostrarAnimo('✨ ¡Trío completado!');
         return true;
       }
       case 'espacio': {

@@ -252,7 +252,6 @@ export function pantallaBolitas(n: number, p: ParamsNivel): Pantalla {
       dibujar(paso.nuevas);
       if (!reducidas()) await esperar(300);
     }
-    if (cadena >= 2) mostrarAnimo(cadena >= 3 ? '¡Cascada increíble!' : '¡Doble combinación!');
     pintarObjetivos();
 
     if (objetivos.every((o) => o.juntadas >= o.cantidad)) {

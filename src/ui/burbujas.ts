@@ -328,7 +328,6 @@ export function pantallaBurbujas(n: number, p: ParamsNivel): Pantalla {
       animadas.push({ x: p.x, y: p.y, color: c.color, t: 0, vy: -4, tipo: 'cae' });
     }
     if (res.reventadas.length) audio.efecto('trio');
-    if (res.caidas.length >= 3) mostrarAnimo(`¡Cayeron ${res.caidas.length}!`);
     // Si el color actual ya no está en el tablero, se cambia por uno que sí esté.
     const quedan = new Set(tablero.filas.flat());
     if (!quedan.has(actual) && !vacio(tablero)) actual = colorParaLanzar(tablero, rng);
