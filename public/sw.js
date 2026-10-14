@@ -2,7 +2,7 @@
 const CACHE = 'mcl-tiles-v1';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/', '/index.html', '/favicon.svg'])));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/', '/index.html', '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'])));
   self.skipWaiting();
 });
 
