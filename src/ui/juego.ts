@@ -131,7 +131,7 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     const extra = (capas - 1) * DESPLAZAMIENTO_CAPA;
     // Tamaño mínimo cómodo de tocar y ver: si el tablero no entra, la zona se desplaza.
     const minimo = Math.min(window.innerWidth, window.innerHeight) < 500 ? 52 : 66;
-    const tw = Math.max(minimo, Math.min(150, (zona.width - 4) / (cols + extra), (zona.height - 8) / (filas * 1.15 + extra + 0.1)));
+    const tw = Math.max(minimo, Math.min(170, zona.width / (cols + extra), zona.height / (filas * 1.15 + extra + 0.1)));
     const th = tw * 1.15;
     const s = tw * DESPLAZAMIENTO_CAPA;
     tableroEl.style.width = `${cols * tw + (capas - 1) * s}px`;
@@ -148,9 +148,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
       b.style.setProperty('--profundidad', String(capas - 1 - f.z));
       b.style.setProperty('--canto', `${Math.max(3, tw * 0.07)}px`);
     }
-    const anchoDisponible = Math.min(window.innerWidth - 32, 980);
+    const anchoDisponible = Math.min(window.innerWidth - 24, 980);
     const cap = partida.capacidad;
-    const tam = Math.max(26, Math.min(tw, 82, (anchoDisponible - 28 - 8 * (cap - 1)) / cap));
+    const tam = Math.max(26, Math.min(tw, 82, window.innerHeight * 0.09, (anchoDisponible - 28 - 8 * (cap - 1)) / cap));
     bandejaEl.style.setProperty('--tam-bandeja', `${tam}px`);
   }
 
