@@ -412,9 +412,10 @@ h1:focus {
   position: relative;
   min-height: 0;
   display: grid;
-  place-items: center;
+  place-items: safe center;
+  overflow: auto;
 }
-.tablero { position: relative; isolation: isolate; }
+.tablero { position: relative; isolation: isolate; margin: auto; }
 
 .ficha {
   --canto: 6px;
@@ -1297,14 +1298,17 @@ h1:focus {
 .modal-pregunta .opcion { min-height: 54px; font-size: 1.05rem; justify-content: center; text-align: center; }
 .modal-pregunta .respuesta {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  text-align: center;
+  gap: 0.3rem;
+  overflow-wrap: anywhere;
   margin: 0;
   padding: 0.55rem 0.8rem;
   font-size: 1rem;
 }
-.modal-pregunta .respuesta-premio { white-space: nowrap; }
+.modal-pregunta .respuesta-premio { font-size: 0.95rem; }
+.modal-pregunta .opcion { white-space: normal; overflow-wrap: anywhere; }
 .modal-pregunta .zona-resultado, .modal-pregunta .pila { gap: 0.5rem; }
 
 /* Deslizar bolitas sin que la página se desplace. */

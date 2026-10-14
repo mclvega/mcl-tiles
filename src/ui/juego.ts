@@ -129,7 +129,9 @@ export function pantallaJuego(params: Record<string, unknown>): Pantalla {
     const cols = tablero.ancho / 2;
     const filas = tablero.alto / 2;
     const extra = (capas - 1) * DESPLAZAMIENTO_CAPA;
-    const tw = Math.max(30, Math.min(150, (zona.width - 4) / (cols + extra), (zona.height - 8) / (filas * 1.15 + extra + 0.1)));
+    // Tamaño mínimo cómodo de tocar y ver: si el tablero no entra, la zona se desplaza.
+    const minimo = Math.min(window.innerWidth, window.innerHeight) < 500 ? 44 : 54;
+    const tw = Math.max(minimo, Math.min(150, (zona.width - 4) / (cols + extra), (zona.height - 8) / (filas * 1.15 + extra + 0.1)));
     const th = tw * 1.15;
     const s = tw * DESPLAZAMIENTO_CAPA;
     tableroEl.style.width = `${cols * tw + (capas - 1) * s}px`;

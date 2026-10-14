@@ -110,37 +110,16 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
     ),
   );
 
-  /* Dificultad */
+  /* Juego */
   raiz.append(
     seccion(
-      '🎯 Dificultad',
+      '🎯 Juego',
       opcion(
-        'Nivel de dificultad',
-        segmentado('dificultad', (Object.keys(MODOS) as Dificultad[]).map((d) => [d, MODOS[d].nombre]), 'Nivel de dificultad'),
-        opciones.enJuego
-          ? 'El cambio se aplica al empezar el próximo nivel.'
-          : '«Muy fácil» y «Fácil» tienen 8 espacios en la bandeja y más ayudas gratis.',
+        'Dificultad',
+        segmentado('dificultad', (Object.keys(MODOS) as Dificultad[]).map((d) => [d, MODOS[d].nombre]), 'Dificultad'),
+        opciones.enJuego ? 'El cambio se aplica al empezar el próximo nivel.' : undefined,
       ),
-      opcion('Ayuda automática (ilumina un trío tras 15 segundos sin jugar)', siNo('ayudaAutomatica', 'Ayuda automática')),
-      opcion('Aviso de bandeja casi llena', siNo('avisoBandeja', 'Aviso de bandeja casi llena')),
-    ),
-  );
-
-  /* Gráficos */
-  raiz.append(
-    seccion(
-      '🖥️ Gráficos',
-      opcion(
-        'Calidad',
-        segmentado('calidad', [['baja', 'Baja'], ['media', 'Media'], ['alta', 'Alta'], ['auto', 'Automática']], 'Calidad'),
-        'Baja: sin sombras ni partículas, ideal para computadoras antiguas. Automática: mide el rendimiento y elige.',
-      ),
-      opcion(
-        'Cuadros por segundo (FPS)',
-        segmentado('fps', [[30, '30 (ahorro)'], [60, '60'], [0, 'Máximo']], 'Cuadros por segundo'),
-      ),
-      opcion('Animaciones', segmentado('animacionesReducidas', [[false, 'Completas'], [true, 'Reducidas']], 'Animaciones')),
-      opcion('Mostrar FPS en pantalla', siNo('mostrarFps', 'Mostrar FPS')),
+      opcion('Ayuda automática', siNo('ayudaAutomatica', 'Ayuda automática'), 'Ilumina un trío si pasas un rato sin jugar.'),
     ),
   );
 
@@ -159,52 +138,27 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
     );
   };
   pintarMelodias();
-  const velocidadVoz = segmentado('velocidadVoz', [[0.75, 'Lenta'], [0.9, 'Normal'], [1.05, 'Rápida']], 'Velocidad de la voz');
   raiz.append(
     seccion(
       '🔊 Sonido',
-      opcion('Volumen general', deslizador('volumenGeneral', 'Volumen general')),
+      opcion('Volumen', deslizador('volumenGeneral', 'Volumen general')),
       opcion('Música', deslizador('volumenMusica', 'Volumen de la música')),
-      opcion('Efectos', deslizador('volumenEfectos', 'Volumen de los efectos')),
-      opcion('Melodía', selectorMelodia, 'Puedes canjear más himnos en El Alfolí.'),
+      opcion('Melodía', selectorMelodia),
       opcion(
-        'Lectura en voz alta',
-        siNo('vozActiva', 'Lectura en voz alta'),
-        voz.disponible ? 'Lee los mensajes, las preguntas y los versículos.' : 'Este navegador no tiene una voz en español disponible.',
+        'Leer en voz alta',
+        siNo('vozActiva', 'Leer en voz alta'),
+        voz.disponible ? undefined : 'Este navegador no tiene una voz en español disponible.',
       ),
-      opcion('Velocidad de la voz', velocidadVoz),
-      boton('Probar la voz', () => voz.hablar(`Hola, ${app.nombre()}. Así suena la lectura en voz alta.`), {
-        icono: '🗣️',
-        variante: 'suave',
-        deshabilitado: !voz.disponible,
-      }),
     ),
   );
 
   /* Pantalla */
-  const botonPantallaCompleta = boton(
-    document.fullscreenElement ? 'Salir de pantalla completa' : 'Pantalla completa',
-    async () => {
-      try {
-        if (document.fullscreenElement) await document.exitFullscreen();
-        else await document.documentElement.requestFullscreen();
-      } catch {
-        avisar('Este navegador no permite pantalla completa.');
-      }
-      botonPantallaCompleta.querySelector('.btn-texto')!.textContent = document.fullscreenElement
-        ? 'Salir de pantalla completa'
-        : 'Pantalla completa';
-    },
-    { icono: '⛶', variante: 'suave' },
-  );
   raiz.append(
     seccion(
       '👓 Pantalla',
       opcion('Tamaño del texto', segmentado('tamanoTexto', [['normal', 'Normal'], ['grande', 'Grande'], ['muyGrande', 'Muy grande']], 'Tamaño del texto')),
-      opcion('Alto contraste', siNo('altoContraste', 'Alto contraste')),
-      opcion('Tema', segmentado('tema', [['claro', 'Claro'], ['oscuro', 'Oscuro'], ['auto', 'Automático']], 'Tema')),
-      opcion('Cursor grande', siNo('cursorGrande', 'Cursor grande')),
-      opcion('Pantalla completa', botonPantallaCompleta, 'También puedes acercar con Ctrl y + en el teclado.'),
+      opcion('Tema', segmentado('tema', [['claro', 'Claro'], ['oscuro', 'Oscuro']], 'Tema')),
+      opcion('Animaciones', segmentado('animacionesReducidas', [[false, 'Completas'], [true, 'Reducidas']], 'Animaciones'), 'Usa «Reducidas» si el juego va lento.'),
     ),
   );
 
