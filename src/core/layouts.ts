@@ -8,7 +8,10 @@ export interface Layout {
   filas: string[];
 }
 
-export const LAYOUTS: Layout[] = [
+/** Máximo de columnas: con más, en un celular las fichas quedan demasiado chicas. */
+export const MAX_COLUMNAS = 5;
+
+const TODAS: Layout[] = [
   { id: 'cuadro3', nombre: 'Cuadro', filas: ['###', '###', '###'] },
   { id: 'rect4x3', nombre: 'Mesa', filas: ['####', '####', '####'] },
   { id: 'monte', nombre: 'Monte', filas: ['...#...', '..###..', '.#####.', '#######'] },
@@ -35,7 +38,21 @@ export const LAYOUTS: Layout[] = [
   { id: 'rect7x6', nombre: 'Muralla', filas: ['#######', '#######', '#######', '#######', '#######', '#######'] },
   { id: 'arcaMayor', nombre: 'Arca del pacto', filas: ['...##...', '..####..', '.######.', '########', '########', '########', '.######.'] },
   { id: 'rect8x7', nombre: 'Muros de Jerusalén', filas: ['########', '########', '########', '########', '########', '########', '########'] },
+  { id: 'monte5', nombre: 'Monte', filas: ['..#..', '.###.', '#####', '#####'] },
+  { id: 'corazon5', nombre: 'Corazón', filas: ['##.##', '#####', '#####', '.###.', '..#..'] },
+  { id: 'rombo5', nombre: 'Piedra preciosa', filas: ['..#..', '.###.', '#####', '.###.', '..#..'] },
+  { id: 'cruz5', nombre: 'Cruz', filas: ['.###.', '#####', '#####', '.###.', '.###.'] },
+  { id: 'copa5', nombre: 'Copa', filas: ['#####', '.###.', '..#..', '.###.'] },
+  { id: 'arca5', nombre: 'Arca', filas: ['.###.', '#####', '#####', '.###.'] },
+  { id: 'templo5', nombre: 'Templo', filas: ['..#..', '.###.', '#####', '#####', '#####', '#####'] },
+  { id: 'corona5', nombre: 'Corona', filas: ['#.#.#', '#####', '#####', '#####'] },
+  { id: 'tablas5', nombre: 'Tablas de la ley', filas: ['##.##', '##.##', '##.##', '##.##'] },
+  { id: 'rect5x6', nombre: 'Atrio', filas: ['#####', '#####', '#####', '#####', '#####', '#####'] },
+  { id: 'rect5x7', nombre: 'Muralla', filas: ['#####', '#####', '#####', '#####', '#####', '#####', '#####'] },
+  { id: 'arca5Mayor', nombre: 'Arca del pacto', filas: ['.###.', '#####', '#####', '#####', '#####', '#####', '.###.'] },
 ];
+
+export const LAYOUTS: Layout[] = TODAS.filter((l) => Math.max(...l.filas.map((f) => f.length)) <= MAX_COLUMNAS);
 
 /** Celdas de la capa base en medias unidades (cada ficha ocupa 2x2). */
 export function baseCells(layout: Layout): Array<[number, number]> {

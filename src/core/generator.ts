@@ -60,6 +60,13 @@ function siguienteCapa(prev: Pos[], rng: Rng): Pos[] {
 function construirCapas(layout: Layout, capas: number, rng: Rng): Pos[][] {
   const resultado: Pos[][] = [baseCells(layout)];
   while (resultado.length < capas) {
+    const n = resultado.length;
+    // Tableros angostos: en vez de achicarse como pirámide, se alterna la capa
+    // desplazada con una copia de la de abajo (como una pared de ladrillos).
+    if (n >= 2 && resultado[n - 2].length > resultado[n - 1].length) {
+      resultado.push(resultado[n - 2].map((p) => [p[0], p[1]] as Pos));
+      continue;
+    }
     const sig = siguienteCapa(resultado[resultado.length - 1], rng);
     if (sig.length === 0) break;
     resultado.push(sig);
@@ -92,7 +99,7 @@ function recortar(capas: Pos[][], meta: number, rng: Rng): void {
   }
 }
 
-const CAPAS_LIMITE = 6;
+const CAPAS_LIMITE = 9;
 
 function elegirGeometria(meta: number, capasPedidas: number, rng: Rng): { layout: Layout; capas: Pos[][] } {
   // Si con las capas pedidas no caben las fichas, se agregan capas hasta que quepan.
