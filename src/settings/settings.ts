@@ -102,5 +102,5 @@ export function aplicarConfigVisual(c: Configuracion): void {
   if (c.tema === 'auto') delete html.dataset.theme;
   else html.dataset.theme = c.tema === 'oscuro' ? 'dark' : 'light';
   // Color de la barra del navegador / app instalada.
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', c.tema === 'oscuro' ? '#050507' : '#1d4e89');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', c.tema === 'oscuro' ? '#000000' : '#1d4e89');
 }

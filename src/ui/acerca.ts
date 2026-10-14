@@ -2,6 +2,7 @@ import { app, type Pantalla } from '../app';
 import { CREDITO_RVR1960, VERSICULOS } from '../content/verses';
 import { PREGUNTAS, PREGUNTAS_ANIMALES } from '../content/quiz';
 import { MELODIAS } from '../content/melodias';
+import { VERSION } from '../version';
 import { boton, h } from './dom';
 
 export function pantallaAcerca(): Pantalla {
@@ -35,6 +36,7 @@ export function pantallaAcerca(): Pantalla {
       'Tu nombre y tu progreso se guardan solo en este navegador. No se envían a ningún servidor ni se usan para publicidad.',
     ),
     seccion('Íconos', 'Las fichas son ilustraciones propias: animalitos, instrumentos y símbolos, sin imágenes de personas.'),
+    h('p', { class: 'texto-suave centrado', text: `Versión ${VERSION}` }),
   );
   return { el };
 }

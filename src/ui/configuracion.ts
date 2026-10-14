@@ -4,6 +4,7 @@ import { MODOS, type Dificultad } from '../core/difficulty';
 import { MELODIAS } from '../content/melodias';
 import { configPorDefecto, type Configuracion } from '../settings/settings';
 import { voz } from '../speech';
+import { VERSION } from '../version';
 import { exportarCodigo, guardadoNuevo, importarCodigo, limpiarNombre } from '../storage';
 import { avisar, boton, confirmar, copiarTexto, h } from './dom';
 
@@ -213,6 +214,7 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
       ),
     );
   }
+  raiz.append(h('p', { class: 'texto-suave centrado', text: `McL Tiles · versión ${VERSION}` }));
   return raiz;
 }
 

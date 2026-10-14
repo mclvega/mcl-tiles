@@ -1,7 +1,7 @@
 {
   "name": "mcl-tiles",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Juego de fichas de navegador con temática bíblica (RVR1960), pensado para adultos mayores.",
   "type": "module",
   "scripts": {
