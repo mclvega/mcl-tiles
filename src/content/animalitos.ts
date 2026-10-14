@@ -16,7 +16,8 @@ interface Variante {
   nombre: string;
 }
 
-const FONDOS = ['#ffe0e0', '#dcedff', '#e2f7d9', '#fff3c2', '#efe0ff', '#ffe6cf'];
+/** Fondos fuertes y bien distintos entre sí: rojo, azul, verde, amarillo, morado y naranja. */
+const FONDOS = ['#e53935', '#1e88e5', '#43a047', '#fdd835', '#8e24aa', '#fb8c00'];
 const ACCESORIOS: Accesorio[] = ['ninguno', 'mono', 'sombrero', 'collar', 'lentes', 'flor'];
 const NOMBRES_ACCESORIO: Record<Accesorio, string> = {
   ninguno: '',
