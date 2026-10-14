@@ -1,5 +1,5 @@
 /* Caché sencilla: sirve primero desde la red y guarda una copia; sin conexión usa la copia. */
-const CACHE = 'mcl-tiles-v1';
+const CACHE = 'mcl-tiles-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/', '/index.html', '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'])));

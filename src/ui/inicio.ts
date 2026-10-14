@@ -2,7 +2,7 @@ import { app, type Pantalla } from '../app';
 import { claveDia, textoVisible, versiculoDelDia } from '../content/verses';
 import { PREMIOS, puedePreguntaDelDia, registrarPreguntaDelDia, sumarTalentos } from '../economy/wallet';
 import { voz } from '../speech';
-import { avisar, h } from './dom';
+import { avisar, boton, h } from './dom';
 import { chipTalentos, logo } from './componentes';
 import { abrirPregunta } from './pregunta';
 
@@ -11,6 +11,29 @@ function saludo(): string {
   if (hora < 12) return 'Buenos días';
   if (hora < 19) return 'Buenas tardes';
   return 'Buenas noches';
+}
+
+function temaOscuro(): boolean {
+  const t = app.g.config.tema;
+  return t === 'oscuro' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
+/** Botón para cambiar entre modo claro y oscuro sin entrar a Configuración. */
+function botonTema(): HTMLElement {
+  const b = boton('', () => {
+    app.g.config.tema = temaOscuro() ? 'claro' : 'oscuro';
+    app.guardar();
+    app.aplicarConfig();
+    pintar();
+  }, { variante: 'suave', clase: 'btn-tema' });
+  const pintar = () => {
+    const oscuro = temaOscuro();
+    b.querySelector('.btn-texto')!.textContent = oscuro ? '☀️' : '🌙';
+    b.setAttribute('aria-label', oscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+    b.title = b.getAttribute('aria-label')!;
+  };
+  pintar();
+  return b;
 }
 
 /** Botón redondo con ícono grande y nombre corto (mismo estilo que las ayudas del juego). */
@@ -56,7 +79,7 @@ export function pantallaInicio(): Pantalla {
   const el = h(
     'main',
     { class: 'pantalla inicio-simple' },
-    h('header', { class: 'cabecera' }, logo(), talentos.el),
+    h('header', { class: 'cabecera' }, logo(), botonTema(), talentos.el),
     h('h1', { class: 'centrado', text: `${saludo()}, ${app.nombre()}` }),
     h(
       'button',
