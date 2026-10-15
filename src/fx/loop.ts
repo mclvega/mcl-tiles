@@ -117,8 +117,14 @@ class Efectos {
     this.habiaParticulas = this.particulas.length > 0;
     ctx.setTransform(this.escala, 0, 0, this.escala, 0, 0);
     ctx.clearRect(0, 0, this.lienzo.width, this.lienzo.height);
-    this.particulas = this.particulas.filter((p) => actualizar(p, dt));
-    for (const p of this.particulas) dibujar(ctx, p);
+    // Se compacta en el mismo array: sin crear uno nuevo en cada fotograma.
+    let vivas = 0;
+    for (const p of this.particulas) {
+      if (!actualizar(p, dt)) continue;
+      this.particulas[vivas++] = p;
+      dibujar(ctx, p);
+    }
+    this.particulas.length = vivas;
   }
 
   /** Mide los FPS reales durante un momento para elegir la calidad automática. */
