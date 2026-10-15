@@ -26,6 +26,7 @@ export interface Configuracion {
   altoContraste: boolean;
   tema: Tema;
   cursorGrande: boolean;
+  pantallaCompleta: boolean;
 }
 
 function prefiereMenosMovimiento(): boolean {
@@ -56,6 +57,7 @@ export function configPorDefecto(): Configuracion {
     altoContraste: false,
     tema: 'claro',
     cursorGrande: false,
+    pantallaCompleta: true,
   };
 }
 
@@ -88,6 +90,7 @@ export function normalizarConfig(entrada: unknown): Configuracion {
     altoContraste: bool(c.altoContraste, d.altoContraste),
     tema: uno(c.tema, ['claro', 'oscuro', 'auto'] as const, d.tema),
     cursorGrande: bool(c.cursorGrande, d.cursorGrande),
+    pantallaCompleta: bool(c.pantallaCompleta, d.pantallaCompleta),
   };
 }
 

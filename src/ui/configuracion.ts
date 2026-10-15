@@ -3,6 +3,7 @@ import { audio } from '../audio';
 import { MODOS, type Dificultad } from '../core/difficulty';
 import { MELODIAS } from '../content/melodias';
 import { configPorDefecto, type Configuracion } from '../settings/settings';
+import { entrarPantallaCompleta, salirPantallaCompleta } from '../fullscreen';
 import { voz } from '../speech';
 import { VERSION } from '../version';
 import { exportarCodigo, guardadoNuevo, importarCodigo, limpiarNombre } from '../storage';
@@ -12,6 +13,7 @@ type Clave = keyof Configuracion;
 
 function cambiar<K extends Clave>(clave: K, valor: Configuracion[K]): void {
   app.g.config[clave] = valor;
+  if (clave === 'pantallaCompleta') (valor ? entrarPantallaCompleta : salirPantallaCompleta)();
   app.guardar();
   app.aplicarConfig();
 }
@@ -160,6 +162,7 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
       opcion('Tamaño del texto', segmentado('tamanoTexto', [['normal', 'Normal'], ['grande', 'Grande'], ['muyGrande', 'Muy grande']], 'Tamaño del texto')),
       opcion('Tema', segmentado('tema', [['claro', 'Claro'], ['oscuro', 'Oscuro']], 'Tema')),
       opcion('Animaciones', segmentado('animacionesReducidas', [[false, 'Completas'], [true, 'Reducidas']], 'Animaciones'), 'Usa «Reducidas» si el juego va lento.'),
+      opcion('Pantalla completa', siNo('pantallaCompleta', 'Pantalla completa'), 'Se activa al tocar la pantalla.'),
     ),
   );
 

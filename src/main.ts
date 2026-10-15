@@ -5,6 +5,7 @@ import './styles/main.css';
 
 import { app } from './app';
 import { audio } from './audio';
+import { iniciarPantallaCompleta } from './fullscreen';
 import { efectos } from './fx/loop';
 import { pantallaAcerca } from './ui/acerca';
 import { pantallaBiblia } from './ui/biblia';
@@ -26,6 +27,7 @@ app.registrar('configuracion', pantallaConfiguracion);
 app.registrar('acerca', pantallaAcerca);
 app.registrar('biblia', pantallaBiblia);
 
+iniciarPantallaCompleta(() => app.g.config.pantallaCompleta);
 efectos.montar();
 app.montar(document.getElementById('app')!);
 app.aplicarConfig();
