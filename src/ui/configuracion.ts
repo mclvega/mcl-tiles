@@ -8,6 +8,7 @@ import { voz } from '../speech';
 import { VERSION } from '../version';
 import { exportarCodigo, guardadoNuevo, importarCodigo, limpiarNombre } from '../storage';
 import { avisar, boton, confirmar, copiarTexto, h } from './dom';
+import { opcionesSinConexion } from './sinconexion';
 
 type Clave = keyof Configuracion;
 
@@ -174,6 +175,7 @@ export function panelConfiguracion(opciones: { enJuego?: boolean } = {}): HTMLEl
     raiz.append(
       seccion(
         '💾 Mis datos',
+        opcionesSinConexion(),
         h('p', { class: 'texto-suave', text: 'Tu progreso se guarda solo en este navegador. Para seguir en otra computadora, copia este código y pégalo allá.' }),
         h('div', { class: 'campo' }, h('label', { for: 'cfg-exportar', text: 'Código de mi progreso' }), codigo),
         boton('Copiar código', async () => {
